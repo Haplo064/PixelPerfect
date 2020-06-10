@@ -80,6 +80,11 @@ namespace PixelPerfect
                 ImGui.Checkbox("Enable", ref enabled);
                 ImGui.Checkbox("Combat Only", ref combat);
                 ImGui.ColorEdit4("Colour", ref col, ImGuiColorEditFlags.NoInputs | ImGuiColorEditFlags.NoLabel);
+                if (ImGui.Button("Save and Close Config"))
+                {
+                    SaveConfig();
+                    config = false;
+                }
                 ImGui.End();
             }
 
@@ -101,11 +106,7 @@ namespace PixelPerfect
                         2f,
                         ImGui.GetColorU32(col),
                         100);
-                    if (ImGui.Button("Save and Close Config"))
-                    {
-                        SaveConfig();
-                        config = false;
-                    }
+
                     ImGui.End();
                 }
             }
