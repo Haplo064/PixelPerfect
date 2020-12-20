@@ -114,3 +114,5 @@ obj/Release/PixelPerfect.dll
 obj/Release/PixelPerfect.pdb
 bin/Release/Lumina.Generated.dll
 bin/Release/SDL2-CS.pdb
+bin/Release/Lumina.Generated.dll
+bin/Release/SDL2-CS.pdb
