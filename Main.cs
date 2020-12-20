@@ -50,7 +50,10 @@ namespace PixelPerfect
 
             this.pluginInterface.UiBuilder.OnBuildUi += DrawWindow;
             this.pluginInterface.UiBuilder.OnOpenConfigUi += ConfigWindow;
-            this.pluginInterface.CommandManager.AddHandler("/pp", new CommandInfo(Command));
+            this.pluginInterface.CommandManager.AddHandler("/pp", new CommandInfo(Command)
+            {
+                HelpMessage = "Pixel Perfect config."
+            });
         }
 
         public void Dispose()
@@ -126,11 +129,13 @@ namespace PixelPerfect
 
                     if (ring)
                     {
+                        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Num.Vector2(0, 0));
                         ImGui.Begin("Ring", ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
                         ImGui.SetWindowPos(new Num.Vector2(0, 0));
-                        ImGui.SetWindowSize(new Num.Vector2(1920, 1080));
+                        ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
                         DrawRingWorld(pluginInterface.ClientState.LocalPlayer, radius, segments, thickness, ImGui.GetColorU32(col_ring));
                         ImGui.End();
+                        ImGui.PopStyleVar();
                     }
                 }
             }
@@ -170,7 +175,9 @@ namespace PixelPerfect
                 ImGui.GetWindowDrawList().PathLineTo(new Num.Vector2(pos.X, pos.Y));
             }
             ImGui.GetWindowDrawList().PathStroke(colour, true, thicc);
+
         }
+
 
     }
 
