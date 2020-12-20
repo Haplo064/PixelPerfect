@@ -112,3 +112,5 @@ obj/Release/PixelPerfect.csproj.FileListAbsolute.txt
 obj/Release/PixelPerfect.csprojAssemblyReference.cache
 obj/Release/PixelPerfect.dll
 obj/Release/PixelPerfect.pdb
+bin/Release/Lumina.Generated.dll
+bin/Release/SDL2-CS.pdb
