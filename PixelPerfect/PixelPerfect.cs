@@ -1,22 +1,32 @@
 ﻿using System;
+using System.Diagnostics;
+using Dalamud.Configuration;
+using Dalamud.Game;
+using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.Command;
+using Dalamud.Game.Gui;
+using Dalamud.Interface;
 using Dalamud.Plugin;
 using ImGuiNET;
-using ImGuiScene;
-using Dalamud.Configuration;
 using Num = System.Numerics;
-using Dalamud.Game.Command;
-using Dalamud.Interface;
 
 namespace PixelPerfect
 {
     public class PixelPerfect : IDalamudPlugin
     {
         public string Name => "Pixel Perfect";
-        private DalamudPluginInterface _pluginInterface;
-        private Config _configuration;
-        private bool _enabled = true;
+        private readonly DalamudPluginInterface _pi;
+        private readonly CommandManager _cm;
+        private readonly ClientState _cs;
+        private readonly Framework _fw;
+        private readonly GameGui _gui;
+        private readonly Condition _condition;
+        
+        private readonly Config _configuration;
+        private bool _enabled;
         private bool _config;
-        private bool _combat = true;
+        private bool _combat;
         private bool _circle;
         private bool _instance;
         private Num.Vector4 _col = new Num.Vector4(1f, 1f, 1f, 1f);
@@ -26,11 +36,24 @@ namespace PixelPerfect
         private float _radius = 10f;
         private int _segments = 100;
         private float _thickness = 10f;
-        
-        public void Initialize(DalamudPluginInterface pI)
+
+        public PixelPerfect(
+            DalamudPluginInterface pluginInterface,
+            CommandManager commandManager,
+            ClientState clientState,
+            Framework framework,
+            GameGui gameGui,
+            Condition condition
+        )
         {
-            _pluginInterface = pI;
-            _configuration = _pluginInterface.GetPluginConfig() as Config ?? new Config();
+            _pi = pluginInterface;
+            _cm = commandManager;
+            _cs = clientState;
+            _fw = framework;
+            _gui = gameGui;
+            _condition = condition;
+
+            _configuration = pluginInterface.GetPluginConfig() as Config ?? new Config();
             _ring = _configuration.Ring;
             _thickness = _configuration.Thickness;
             _colRing = _configuration.ColRing;
@@ -42,20 +65,27 @@ namespace PixelPerfect
             _instance = _configuration.Instance;
             _col = _configuration.Col;
             _col2 = _configuration.Col2;
-            _pluginInterface.UiBuilder.OnBuildUi += DrawWindow;
-            _pluginInterface.UiBuilder.OnOpenConfigUi += ConfigWindow;
-            _pluginInterface.CommandManager.AddHandler("/pp", new CommandInfo(Command)
+            pluginInterface.UiBuilder.Draw += DrawWindow;
+            pluginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
+            commandManager.AddHandler("/pp", new CommandInfo(Command)
             {
                 HelpMessage = "Pixel Perfect config."
             });
         }
 
+        private void ConfigWindow()
+        {
+            _config = true;
+        }
+
+
         public void Dispose()
         {
-            _pluginInterface.UiBuilder.OnBuildUi -= DrawWindow;
-            _pluginInterface.UiBuilder.OnOpenConfigUi -= ConfigWindow;
-            _pluginInterface.CommandManager.RemoveHandler("/pp");
+            _pi.UiBuilder.Draw -= DrawWindow;
+            _pi.UiBuilder.OpenConfigUi -= ConfigWindow;
+            _cm.RemoveHandler("/pp");
         }
+
 
         private void DrawWindow()
         {
@@ -81,6 +111,7 @@ namespace PixelPerfect
                     SaveConfig();
                     _config = false;
                 }
+
                 ImGui.SameLine();
                 ImGui.PushStyleColor(ImGuiCol.Button, 0xFF000000 | 0x005E5BFF);
                 ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0xDD000000 | 0x005E5BFF);
@@ -88,35 +119,54 @@ namespace PixelPerfect
 
                 if (ImGui.Button("Buy Haplo a Hot Chocolate"))
                 {
-                    System.Diagnostics.Process.Start("https://ko-fi.com/haplo");
+                    Process.Start(new ProcessStartInfo
+                    {
+                        FileName = "https://ko-fi.com/haplo",
+                        UseShellExecute = true
+                    });
                 }
+
                 ImGui.PopStyleColor(3);
                 ImGui.End();
             }
 
-            if (!_enabled || _pluginInterface.ClientState.LocalPlayer == null) return;
-            if(_combat)
+            if (!_enabled || _cs.LocalPlayer == null) return;
+            if (_combat)
             {
-                if (!_pluginInterface.ClientState.Condition[Dalamud.Game.ClientState.ConditionFlag.InCombat]) { return; }
+                if (!_condition[ConditionFlag.InCombat])
+                {
+                    return;
+                }
             }
 
             if (_instance)
             {
-                if (!_pluginInterface.ClientState.Condition[Dalamud.Game.ClientState.ConditionFlag.BoundByDuty]) { return; }
+                if (!_condition[ConditionFlag.BoundByDuty])
+                {
+                    return;
+                }
+                
             }
 
-            var actor = _pluginInterface.ClientState.LocalPlayer;
-            if (!_pluginInterface.Framework.Gui.WorldToScreen(
-                new SharpDX.Vector3(actor.Position.X, actor.Position.Z, actor.Position.Y),
+            var actor = _cs.LocalPlayer;
+            if (!_gui.WorldToScreen(
+                new Num.Vector3(actor.Position.X, actor.Position.Y, actor.Position.Z),
                 out var pos)) return;
-            ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Num.Vector2(pos.X - 10 - ImGuiHelpers.MainViewport.Pos.X, pos.Y - 10- ImGuiHelpers.MainViewport.Pos.Y));
-            ImGui.Begin("Pixel Perfect", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoBackground);
+            
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Num.Vector2(0, 0));
+            ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Num.Vector2(0, 0));
+            ImGui.Begin("Ring",
+                ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar |
+                ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
+            ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
+            
+           
             ImGui.GetWindowDrawList().AddCircleFilled(
                 new Num.Vector2(pos.X, pos.Y),
                 2f,
                 ImGui.GetColorU32(_col),
                 100);
-            if(_circle)
+            if (_circle)
             {
                 ImGui.GetWindowDrawList().AddCircle(
                     new Num.Vector2(pos.X, pos.Y),
@@ -124,21 +174,17 @@ namespace PixelPerfect
                     ImGui.GetColorU32(_col2),
                     100);
             }
-            ImGui.End();
 
-            if (!_ring) return;
-            ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Num.Vector2(0, 0));
-            ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Num.Vector2(0, 0));
-            ImGui.Begin("Ring", ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
-            ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-            DrawRingWorld(_pluginInterface.ClientState.LocalPlayer, _radius, _segments, _thickness, ImGui.GetColorU32(_colRing));
+            if (_ring)
+            {
+                DrawRingWorld(_cs.LocalPlayer, _radius, _segments, _thickness,
+                    ImGui.GetColorU32(_colRing));
+            }
+            
             ImGui.End();
             ImGui.PopStyleVar();
         }
-        private void ConfigWindow(object sender, EventArgs args)
-        {
-            _config = true;
-        }
+        
 
         private void Command(string command, string arguments)
         {
@@ -158,20 +204,26 @@ namespace PixelPerfect
             _configuration.Segments = _segments;
             _configuration.Ring = _ring;
             _configuration.Radius = _radius;
-            _pluginInterface.SavePluginConfig(_configuration);
+            _pi.SavePluginConfig(_configuration);
         }
 
-        private void DrawRingWorld(Dalamud.Game.ClientState.Actors.Types.Actor actor, float radius, int numSegments, float thicc, uint colour)
+        private void DrawRingWorld(Dalamud.Game.ClientState.Objects.Types.Character actor, float radius, int numSegments, float thicc, uint colour)
         {
             var seg = numSegments / 2;
             for (var i = 0; i <= numSegments; i++)
             {
-                _pluginInterface.Framework.Gui.WorldToScreen(new SharpDX.Vector3(actor.Position.X + (radius * (float)Math.Sin((Math.PI / seg) * i)), actor.Position.Z, actor.Position.Y + (radius * (float)Math.Cos((Math.PI / seg) * i))), out SharpDX.Vector2 pos);
+                _gui.WorldToScreen(new Num.Vector3(
+                    actor.Position.X + (radius * (float)Math.Sin((Math.PI / seg) * i)),
+                    actor.Position.Y,
+                    actor.Position.Z + (radius * (float)Math.Cos((Math.PI / seg) * i))
+                    ),
+                    out Num.Vector2 pos);
                 ImGui.GetWindowDrawList().PathLineTo(new Num.Vector2(pos.X, pos.Y));
             }
-            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc);
+            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.None, thicc);
         }
     }
+
 
     public class Config : IPluginConfiguration
     {
@@ -187,8 +239,5 @@ namespace PixelPerfect
         public float Thickness { get; set; } = 10f;
         public bool Ring { get; set; }
         public float Radius { get; set; } = 2f;
-
-
     }
-
 }
