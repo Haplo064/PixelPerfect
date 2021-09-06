@@ -1,9 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29613.14
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelPerfect", "PixelPerfect.csproj", "{3C885F1A-C370-4EB7-ABF4-DBF000F72F9E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PixelPerfect", "PixelPerfect\PixelPerfect.csproj", "{DF8FE47F-13FD-486F-9AB2-7D7143F66509}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +8,9 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3C885F1A-C370-4EB7-ABF4-DBF000F72F9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3C885F1A-C370-4EB7-ABF4-DBF000F72F9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3C885F1A-C370-4EB7-ABF4-DBF000F72F9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3C885F1A-C370-4EB7-ABF4-DBF000F72F9E}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {EA07E412-F4E4-43EC-898E-AA3FAFF6367F}
+		{DF8FE47F-13FD-486F-9AB2-7D7143F66509}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF8FE47F-13FD-486F-9AB2-7D7143F66509}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF8FE47F-13FD-486F-9AB2-7D7143F66509}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF8FE47F-13FD-486F-9AB2-7D7143F66509}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
