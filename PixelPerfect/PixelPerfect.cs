@@ -154,6 +154,7 @@ namespace PixelPerfect
                 out var pos)) return;
             
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Num.Vector2(0, 0));
+            ImGuiHelpers.ForceNextWindowMainViewport();
             ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Num.Vector2(0, 0));
             ImGui.Begin("Ring",
                 ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar |
