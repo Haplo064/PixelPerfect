@@ -3,11 +3,11 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
         <Authors>Haplo064</Authors>
-        <Version>1.4.0.2</Version>
+        <Version>1.4.0.3</Version>
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Dalamud, Version=6.2.0.6, Culture=neutral, PublicKeyToken=null">
+      <Reference Include="Dalamud, Version=6.4.0.3, Culture=neutral, PublicKeyToken=null">
         <HintPath>$(AppData)\XIVLauncher\addon\Hooks\dev\Dalamud.dll</HintPath>
       </Reference>
       <Reference Include="ImGui.NET, Version=1.82.0.0, Culture=neutral, PublicKeyToken=null">
