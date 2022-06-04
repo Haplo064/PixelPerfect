@@ -47,6 +47,8 @@ namespace PixelPerfect
         private bool _north1;
         private bool _north2;
         private bool _north3;
+        private bool _direction;
+        private Num.Vector4 _dirLineCol = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
         private float _lineOffset = 0.6f;
         private float _lineLength = 1f;
         private float _chevLength = 0.5f;
@@ -106,6 +108,8 @@ namespace PixelPerfect
             _lineThicc = _configuration.LineThicc;
             _chevCol = _configuration.ChevCol;
             _lineCol = _configuration.LineCol;
+            _direction = _configuration.Direction;
+            _dirLineCol = _configuration.DirectionColor;
             
             pluginInterface.UiBuilder.Draw += DrawWindow;
             pluginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
@@ -254,7 +258,18 @@ namespace PixelPerfect
                         }
                     }
                 }
-
+                ImGui.Checkbox("Show Facing", ref _direction);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("An indicator that always points where your character is facing");
+                }
+                if (_direction) {
+                    ImGui.ColorEdit4("Line Color", ref _dirLineCol, ImGuiColorEditFlags.NoInputs);
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("The color of the line");
+                    }
+                }
                 
                 
                 
@@ -462,6 +477,26 @@ namespace PixelPerfect
                         ImGui.GetColorU32(_chevCol), _chevThicc);
                 }
             }
+
+            if (_direction) {
+                
+                _gui.WorldToScreen(new Num.Vector3(
+                        actor.Position.X + ((1.6f) * (float)Math.Sin(actor.Rotation)),
+                        actor.Position.Y,
+                        actor.Position.Z + ((1.6f) * (float)Math.Cos(actor.Rotation))
+                    ),
+                    out Num.Vector2 lineTip);
+                
+                _gui.WorldToScreen(new Num.Vector3(
+                        actor.Position.X + (0.6f * (float)Math.Sin(actor.Rotation)),
+                        actor.Position.Y,
+                        actor.Position.Z + (0.6f * (float)Math.Cos(actor.Rotation))
+                    ),
+                    out Num.Vector2 lineOffset);
+                
+                ImGui.GetWindowDrawList().AddLine(new Num.Vector2(lineTip.X, lineTip.Y), new Num.Vector2(lineOffset.X, lineOffset.Y),
+                    ImGui.GetColorU32(_dirLineCol), 3f);
+            }
             
             ImGui.End();
             ImGui.PopStyleVar();
@@ -520,6 +555,8 @@ namespace PixelPerfect
             _configuration.LineThicc = _lineThicc;
             _configuration.ChevCol = _chevCol;
             _configuration.LineCol = _lineCol;
+            _configuration.Direction = _direction;
+            _configuration.DirectionColor = _dirLineCol;
             _pi.SavePluginConfig(_configuration);
         }
 
@@ -573,5 +610,8 @@ namespace PixelPerfect
         public float LineThicc { get; set; } = 5f;
         public Num.Vector4 ChevCol { get; set; } = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
         public Num.Vector4 LineCol { get; set; } = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
+        public bool Direction { get; set; } = false;
+        public Num.Vector4 DirectionColor { get; set; } = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
+        
     }
 }
