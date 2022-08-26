@@ -267,7 +267,7 @@ public class ConfigWindow : IDisposable
                 ToolTip("The colour of the ring");
             }
 
-            if (ImGui.Button("Save and Close Config"))
+            if (ImGui.Button("Close Config"))
             {
                 _config.Save();
                 Visible = false;
@@ -415,7 +415,7 @@ public class ConfigWindow : IDisposable
         ImGui.PopStyleVar();
     }
 
-    private void ToolTip(string hoverText)
+    private static void ToolTip(string hoverText)
     {
         if (ImGui.IsItemHovered())
         {
