@@ -15,12 +15,15 @@
 
     <ItemGroup>
       <Reference Include="Dalamud, Culture=neutral, PublicKeyToken=null">
+          <Private>false</Private>
         <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
       </Reference>
       <Reference Include="ImGui.NET, Culture=neutral, PublicKeyToken=null">
+          <Private>false</Private>
         <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
       </Reference>
       <Reference Include="ImGuiScene, Culture=neutral, PublicKeyToken=null">
+          <Private>false</Private>
         <HintPath>$(DalamudLibPath)ImGuiScene.dll</HintPath>
       </Reference>
     </ItemGroup>
