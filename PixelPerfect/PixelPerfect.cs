@@ -29,6 +29,7 @@ namespace PixelPerfect
         private bool _combat;
         private bool _circle;
         private bool _instance;
+        private bool _cutscene;
         private Num.Vector4 _col = new Num.Vector4(1f, 1f, 1f, 1f);
         private Num.Vector4 _col2 = new Num.Vector4(0.4f, 0.4f, 0.4f, 1f);
         //ring
@@ -86,6 +87,7 @@ namespace PixelPerfect
             _combat = _configuration.Combat;
             _circle = _configuration.Circle;
             _instance = _configuration.Instance;
+            _cutscene = _configuration.Cutscene;
             _col = _configuration.Col;
             _col2 = _configuration.Col2;
             _ring2 = _configuration.Ring2;
@@ -148,7 +150,13 @@ namespace PixelPerfect
                 {
                     ImGui.SetTooltip("Only show all of this during instances (like dungeons, raids etc)");
                 }
-                
+                ImGui.SameLine();
+                ImGui.Checkbox("Show in cutscene", ref _cutscene);
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Show all of this during cutscene");
+                }
+
                 ImGui.Separator();
                 ImGui.Checkbox("Hitbox", ref _enabled);
                 if (ImGui.IsItemHovered())
@@ -368,7 +376,18 @@ namespace PixelPerfect
                 {
                     return;
                 }
-                
+
+            }
+
+            if (!_cutscene)
+            {
+                var cutsceneActive = _condition[ConditionFlag.OccupiedInCutSceneEvent] ||
+                                     _condition[ConditionFlag.WatchingCutscene] ||
+                                     _condition[ConditionFlag.WatchingCutscene78];
+                if (cutsceneActive)
+                {
+                    return;
+                }
             }
 
             var actor = _cs.LocalPlayer;
@@ -548,6 +567,7 @@ namespace PixelPerfect
         public bool Combat { get; set; } = true;
         public bool Circle { get; set; }
         public bool Instance { get; set; }
+        public bool Cutscene { get; set; }
         public Num.Vector4 Col { get; set; } = new Num.Vector4(1f, 1f, 1f, 1f);
         public Num.Vector4 Col2 { get; set; } = new Num.Vector4(0.4f, 0.4f, 0.4f, 1f);
         public Num.Vector4 ColRing { get; set; } = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
