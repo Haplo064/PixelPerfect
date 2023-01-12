@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net6.0-windows</TargetFramework>
+        <TargetFramework>net7.0</TargetFramework>
         <Authors>Haplo064</Authors>
-        <Version>2.0.0.1</Version>
+        <Version>2.0.0.2</Version>
         <Description>Perfecting Pixels</Description>
         <PackageProjectUrl>https://github.com/Haplo064/PixelPerfect</PackageProjectUrl>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
@@ -29,7 +29,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="DalamudPackager" Version="2.1.8" />
+      <PackageReference Include="DalamudPackager" Version="2.1.10" />
     </ItemGroup>
 
 </Project>
