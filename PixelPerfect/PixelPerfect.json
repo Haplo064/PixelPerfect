@@ -8,7 +8,6 @@
   "RepoUrl": "https://github.com/Haplo064/PixelPerfect",
   "ApplicableVersion": "any",
   "LoadPriority": 0,
-  "DalamudApiLevel":  8,
   "ImageUrls":
   [
     "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/image1.png",
