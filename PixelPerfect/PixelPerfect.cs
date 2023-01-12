@@ -10,6 +10,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin;
 using ImGuiNET;
 using Num = System.Numerics;
+using System.Collections.Generic;
 
 namespace PixelPerfect
 {
@@ -22,43 +23,15 @@ namespace PixelPerfect
         private readonly Framework _fw;
         private readonly GameGui _gui;
         private readonly Condition _condition;
-        
         private readonly Config _configuration;
         private bool _enabled;
         private bool _config;
         private bool _combat;
         private bool _circle;
         private bool _instance;
-        private Num.Vector4 _col = new Num.Vector4(1f, 1f, 1f, 1f);
-        private Num.Vector4 _col2 = new Num.Vector4(0.4f, 0.4f, 0.4f, 1f);
-        //ring
-        private bool _ring;
-        private Num.Vector4 _colRing = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
-        private float _radius = 10f;
-        private int _segments = 100;
-        private float _thickness = 10f;
-        //ring2
-        private bool _ring2;
-        private Num.Vector4 _colRing2 = new Num.Vector4(0.4f, 0.4f, 0.4f, 0.5f);
-        private float _radius2 = 10f;
-        private int _segments2 = 100;
-        private float _thickness2 = 10f;
-        //north stuff
-        private bool _north1;
-        private bool _north2;
-        private bool _north3;
-        private float _lineOffset = 0.6f;
-        private float _lineLength = 1f;
-        private float _chevLength = 0.5f;
-        private float _chevOffset = 0.5f;
-        private float _chevRad = 0.5f;
-        private float _chevSin = 0.5f;
-        private float _chevThicc = 10f;
-        private float _lineThicc = 10f;
-        private Num.Vector4 _chevCol = new Num.Vector4(1f, 1f, 1f, 1f);
-        private Num.Vector4 _lineCol = new Num.Vector4(1f, 1f, 1f, 1f);
         private int dirtyHack = 0;
-        
+        private  List<Drawing> doodleBag;
+
 
         public PixelPerfect(
             DalamudPluginInterface pluginInterface,
@@ -77,36 +50,12 @@ namespace PixelPerfect
             _condition = condition;
 
             _configuration = pluginInterface.GetPluginConfig() as Config ?? new Config();
-            _ring = _configuration.Ring;
-            _thickness = _configuration.Thickness;
-            _colRing = _configuration.ColRing;
-            _segments = _configuration.Segments;
-            _radius = _configuration.Radius;
             _enabled = _configuration.Enabled;
             _combat = _configuration.Combat;
             _circle = _configuration.Circle;
             _instance = _configuration.Instance;
-            _col = _configuration.Col;
-            _col2 = _configuration.Col2;
-            _ring2 = _configuration.Ring2;
-            _thickness2 = _configuration.Thickness2;
-            _colRing2 = _configuration.ColRing2;
-            _segments2 = _configuration.Segments2;
-            _radius2 = _configuration.Radius2;
-            _north1 = _configuration.North1;
-            _north2 = _configuration.North2;
-            _north3 = _configuration.North3;
-            _lineOffset = _configuration.LineOffset;
-            _lineLength = _configuration.LineLength;
-            _chevLength = _configuration.ChevLength;
-            _chevOffset = _configuration.ChevOffset;
-            _chevRad = _configuration.ChevRad;
-            _chevSin = _configuration.ChevSin;
-            _chevThicc = _configuration.ChevThicc;
-            _lineThicc = _configuration.LineThicc;
-            _chevCol = _configuration.ChevCol;
-            _lineCol = _configuration.LineCol;
-            
+            doodleBag = new List<Drawing>();
+
             pluginInterface.UiBuilder.Draw += DrawWindow;
             pluginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
             commandManager.AddHandler("/pp", new CommandInfo(Command)
@@ -136,195 +85,66 @@ namespace PixelPerfect
             {
                 ImGui.SetNextWindowSize(new Num.Vector2(300, 500), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Config", ref _config);
-                
-                ImGui.Checkbox("Combat Only", ref _combat);
-                if (ImGui.IsItemHovered())
+
+                if (ImGui.Button("Add Doodle"))
                 {
-                    ImGui.SetTooltip("Only show all of this during combat");
-                }
-                ImGui.SameLine();
-                ImGui.Checkbox("Instance Only", ref _instance);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("Only show all of this during instances (like dungeons, raids etc)");
-                }
-                
-                ImGui.Separator();
-                ImGui.Checkbox("Hitbox", ref _enabled);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("A visual representation of your hitbox");
-                }
-                if (_enabled)
-                {
-                    ImGui.SameLine();
-                    ImGui.ColorEdit4("Hitbox Colour", ref _col, ImGuiColorEditFlags.NoInputs);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The colour of the hitbox");
-                    }
-                }
-                ImGui.Checkbox("Outer Ring", ref _circle);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("A tiny circle of colour around the hitbox dot");
-                }
-                if (_circle)
-                {
-                    ImGui.SameLine();
-                    ImGui.ColorEdit4("Outer Colour", ref _col2, ImGuiColorEditFlags.NoInputs);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The colour of the ring");
-                    }
-                }
-                ImGui.Checkbox("Show North", ref _north1);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("An indicator that always points north");
-                }
-                if (_north1)
-                {
-                    ImGui.SameLine();
-                    ImGui.Checkbox("Line", ref _north2);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("What can I say. It's a line");
-                    }
-                    ImGui.SameLine();
-                    ImGui.Checkbox("Chevron", ref _north3);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("Fancy word for a pointer");
-                    }
-                    if (_north2)
-                    {
-                        ImGui.DragFloat("Line Offset", ref _lineOffset);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("How far from your hitbox to start the line");
-                        }
-                        ImGui.DragFloat("Line Length", ref _lineLength);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("How long the line is");
-                        }
-                        ImGui.DragFloat("Line Thickness", ref _lineThicc);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("How thicc the line is");
-                        }
-                        ImGui.ColorEdit4("Line Colour", ref _lineCol, ImGuiColorEditFlags.NoInputs);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("The colour of the line");
-                        }
-                    }
-                    if (_north3)
-                    {
-                        ImGui.DragFloat("Chevron Offset", ref _chevOffset);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("These are all a bit iffy, due to maths. Mess around with them");
-                        }
-                        ImGui.DragFloat("Chevron Length", ref _chevLength);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("These are all a bit iffy, due to maths. Mess around with them");
-                        }
-                        ImGui.DragFloat("Chevron Radius", ref _chevRad);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("These are all a bit iffy, due to maths. Mess around with them");
-                        }
-                        ImGui.DragFloat("Chevron Sin", ref _chevSin);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("These are all a bit iffy, due to maths. Mess around with them");
-                        }
-                        ImGui.DragFloat("Chevron Thickness", ref _chevThicc);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("How thicc the Chevron is");
-                        }
-                        ImGui.ColorEdit4("Chevron Colour", ref _chevCol, ImGuiColorEditFlags.NoInputs);
-                        if (ImGui.IsItemHovered())
-                        {
-                            ImGui.SetTooltip("The colour of the Chevron");
-                        }
-                    }
+                    doodleBag.Add(new Drawing());
                 }
 
-                
-                
-                
-                ImGui.Separator();
-                ImGui.Checkbox("Ring", ref _ring);
-                if (ImGui.IsItemHovered())
+                var number = 0;
+                foreach (var doodle in doodleBag)
                 {
-                    ImGui.SetTooltip("Show a ring around your character");
-                }
-                if (_ring)
-                {
-                    ImGui.DragFloat("Yalms", ref _radius);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The radius of the ring");
-                    }
-                    ImGui.DragFloat("Thickness", ref _thickness);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The thiccness of the ring");
-                    }
-                    ImGui.DragInt("Smoothness", ref _segments);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("How many segments to make the ring out of");
-                    }
-                    ImGui.ColorEdit4("Ring Colour", ref _colRing, ImGuiColorEditFlags.NoInputs);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The colour of the ring");
-                    }
-                }
-                ImGui.Separator();
-                ImGui.Checkbox("Ring 2", ref _ring2);
-                if (ImGui.IsItemHovered())
-                {
-                    ImGui.SetTooltip("Show another ring around your character");
-                }
-                if (_ring2)
-                {
-                    ImGui.DragFloat("Yalms 2", ref _radius2);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The radius of the ring");
-                    }
-                    ImGui.DragFloat("Thickness 2", ref _thickness2);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The thiccness of the ring");
-                    }
-                    ImGui.DragInt("Smoothness 2", ref _segments2);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("How many segments to make the ring out of");
-                    }
-                    ImGui.ColorEdit4("Ring Colour 2", ref _colRing2, ImGuiColorEditFlags.NoInputs);
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.SetTooltip("The colour of the ring");
-                    }
-                }
+                    var enabled = doodle.Enabled;
+                    var type = doodle.Type;
+                    var colour = doodle.Colour;
+                    var posxy = doodle.Pos;
+                    var north = doodle.North;
+                    var thickness = doodle.Thickness;
+                    var segments = doodle.Segments;
+                    var radius = doodle.Radius;
+                    var offset = doodle.Offset;
+                    var length = doodle.Length;
+                    var vector = doodle.Vector;
+                    var filled = doodle.Filled;
 
+                    ImGui.Checkbox($"Enable##{number}", ref enabled);
+                    ImGui.InputInt($"Type##{number}", ref type);
+                    ImGui.ColorEdit4($"Colour##{number}", ref colour, ImGuiColorEditFlags.NoInputs);
+                    //ImGui.Checkbox($"Player##{number}", ref posxy);
+                    ImGui.Checkbox($"Locked North##{number}", ref north);
+                    ImGui.DragFloat($"Thickness{number}",ref thickness, 1,0,99);
+                    ImGui.DragInt($"Segments{number}", ref segments, 1, 0, 999);
+                    ImGui.DragFloat($"Radius{number}", ref radius, 0.1f, 0, 99);
+                    ImGui.DragFloat($"Offset{number}", ref offset, 0.1f, 0, 99);
+                    ImGui.DragFloat($"Length{number}", ref length, 0.1f, 0, 99); //Remove?
+                    //Vector (todo)
+                    ImGui.Checkbox($"Filled##{number}", ref filled);
 
+                    doodle.Enabled = enabled;
+                    doodle.Type = type;
+                    doodle.Colour = colour;
+                    doodle.Pos = posxy;
+                    doodle.North = north;
+                    doodle.Thickness = thickness;
+                    doodle.Segments = segments;
+                    doodle.Radius = radius;
+                    doodle.Offset = offset;
+                    doodle.Length = length;
+                    doodle.Vector = vector;
+                    doodle.Filled = filled;
+                    number++;
+
+                    ImGui.Separator();
+                } 
+
+    
 
                 if (ImGui.Button("Save and Close Config"))
                 {
                     SaveConfig();
                     _config = false;
                 }
-                
+
 
                 ImGui.SameLine();
                 ImGui.PushStyleColor(ImGuiCol.Button, 0xFF000000 | 0x005E5BFF);
@@ -342,7 +162,7 @@ namespace PixelPerfect
 
                 ImGui.PopStyleColor(3);
                 ImGui.End();
-                
+
                 if (dirtyHack > 100)
                 {
                     SaveConfig();
@@ -353,54 +173,47 @@ namespace PixelPerfect
             }
 
             if (_cs.LocalPlayer == null) return;
-            
-            if (_combat)
-            {
-                if (!_condition[ConditionFlag.InCombat])
-                {
-                    return;
-                }
-            }
-
-            if (_instance)
-            {
-                if (!_condition[ConditionFlag.BoundByDuty])
-                {
-                    return;
-                }
-                
-            }
 
             var actor = _cs.LocalPlayer;
             if (!_gui.WorldToScreen(
                 new Num.Vector3(actor.Position.X, actor.Position.Y, actor.Position.Z),
                 out var pos)) return;
-            
+
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Num.Vector2(0, 0));
             ImGuiHelpers.ForceNextWindowMainViewport();
             ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Num.Vector2(0, 0));
-            ImGui.Begin("Ring",
+            ImGui.Begin("Canvas",
                 ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar |
                 ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
             ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
-            
-           if(_enabled)
-           {
-               ImGui.GetWindowDrawList().AddCircleFilled(
-                   new Num.Vector2(pos.X, pos.Y),
-                   2f,
-                   ImGui.GetColorU32(_col),
-                   100);
-           }
-           if (_circle)
+
+            foreach(var doodle in doodleBag)
             {
-                ImGui.GetWindowDrawList().AddCircle(
-                    new Num.Vector2(pos.X, pos.Y),
-                    2.2f,
-                    ImGui.GetColorU32(_col2),
-                    100);
+                if (!doodle.Enabled) continue;
+                if (doodle.Type == 0)
+                {
+                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour));
+                }
+                if(doodle.Type == 1)
+                {
+
+                }
+                if (doodle.Type == 2)
+                {
+                    if (doodle.Filled)
+                    {
+                        ImGui.GetWindowDrawList().AddCircleFilled(new Num.Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments);
+                    }
+                    else 
+                    {
+                        ImGui.GetWindowDrawList().AddCircle(new Num.Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments, doodle.Thickness);
+                    }
+                    
+                }
+
             }
 
+            /*
             if (_ring)
             {
                 DrawRingWorld(_cs.LocalPlayer, _radius, _segments, _thickness,
@@ -461,31 +274,18 @@ namespace PixelPerfect
                     ImGui.GetWindowDrawList().AddLine(new Num.Vector2(chevTip.X, chevTip.Y), new Num.Vector2(chevOffset2.X, chevOffset2.Y),
                         ImGui.GetColorU32(_chevCol), _chevThicc);
                 }
-            }
             
+            }
+            */
+
             ImGui.End();
             ImGui.PopStyleVar();
         }
-        
+
 
         private void Command(string command, string arguments)
         {
-            if (arguments == "ring")
-            {
-                _ring = !_ring;
-            }
-            else if(arguments == "ring2")
-            {
-                _ring2 = !_ring2;
-            }
-            else if(arguments == "north")
-            {
-                _north1 = !_north1;
-            }
-            else
-            {
-                _config = !_config;
-            }
+             _config = !_config;
             SaveConfig();
         }
 
@@ -495,31 +295,6 @@ namespace PixelPerfect
             _configuration.Combat = _combat;
             _configuration.Circle = _circle;
             _configuration.Instance = _instance;
-            _configuration.Col = _col;
-            _configuration.Col2 = _col2;
-            _configuration.ColRing = _colRing;
-            _configuration.Thickness = _thickness;
-            _configuration.Segments = _segments;
-            _configuration.Ring = _ring;
-            _configuration.Radius = _radius;
-            _configuration.Ring2 = _ring2;
-            _configuration.Thickness2 = _thickness2;
-            _configuration.ColRing2 = _colRing2;
-            _configuration.Segments2 = _segments2;
-            _configuration.Radius2 = _radius2;
-            _configuration.North1 = _north1;
-            _configuration.North2 = _north2;
-            _configuration.North3 = _north3;
-            _configuration.LineOffset = _lineOffset;
-            _configuration.LineLength = _lineLength;
-            _configuration.ChevLength = _chevLength;
-            _configuration.ChevOffset = _chevOffset;
-            _configuration.ChevRad = _chevRad;
-            _configuration.ChevSin = _chevSin;
-            _configuration.ChevThicc = _chevThicc;
-            _configuration.LineThicc = _lineThicc;
-            _configuration.ChevCol = _chevCol;
-            _configuration.LineCol = _lineCol;
             _pi.SavePluginConfig(_configuration);
         }
 
@@ -538,6 +313,34 @@ namespace PixelPerfect
             }
             ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.None, thicc);
         }
+    }
+
+    public class Drawing
+    {
+        public String Name { get; set; } = "";
+        public bool Enabled { get; set; } = true;
+        //add class restriction
+        //add type (melee/ranged/medic etc) restrictions
+        //add instance restrictions
+        //add doing (casting etc) resctictions
+
+        //0 = Ring
+        //1 = Line
+        //2 = Circle
+        public int Type { get; set; } = 0;
+        public Num.Vector4 Colour { get; set; } = new Num.Vector4(1f, 1f, 1f, 1f);
+        public bool Pos { get; set; } = true;
+        public bool North { get; set; } = true;
+        public float Thickness { get; set; } = 10f;
+        //Circles only
+        public int Segments { get; set; } = 100;
+        public float Radius { get; set; } = 2f;
+        //Lines only
+        public float Offset { get; set; } = 0.5f;
+        public float Length { get; set; } = 1f;
+        public Num.Vector2 Vector { get; set; } = new Num.Vector2( 0f, 0f);
+        //Circles only
+        public bool Filled { get; set; } =  true;
     }
 
 
