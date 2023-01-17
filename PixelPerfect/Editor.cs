@@ -34,7 +34,7 @@ namespace PixelPerfect
                 ImGui.InputFloat("Scale", ref editorScale, 0.1f, 1f);
                 if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Each box is 1 Yalm by 1 Yalm"); }
                 ImGui.PopItemWidth();
-                if (editorScale <= 0) editorScale = 0.1f;
+                if (editorScale <= 0.1f) editorScale = 0.1f;
 
                 var windowPos = ImGui.GetWindowPos();
                 var windowMax = ImGui.GetWindowContentRegionMax();
@@ -134,6 +134,11 @@ namespace PixelPerfect
                     }
                     if (doodle.Type == 0)//Ring
                     {
+                        if (doodle.Offset)
+                        {
+                            dotPosX += (doodle.Vector.X * 10 * editorScale);
+                            dotPosY += (doodle.Vector.Y * 10 * editorScale);
+                        }
                         DrawRingEditor(dotPosX, dotPosY,
                             doodle.Radius * 10 * editorScale,
                             doodle.Segments,
@@ -173,6 +178,11 @@ namespace PixelPerfect
                     }
                     if (doodle.Type == 2)//Circle
                     {
+                        if (doodle.Offset)
+                        {
+                            dotPosX += (doodle.Vector.X * 10 * editorScale);
+                            dotPosY += (doodle.Vector.Y * 10 * editorScale);
+                        }
                         if (doodle.Filled)
                         {
                             ImGui.GetWindowDrawList().AddCircleFilled(

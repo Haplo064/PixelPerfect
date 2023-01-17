@@ -22,10 +22,6 @@ namespace PixelPerfect
 
             var actor = _cs.LocalPlayer;
 
-            _gui.WorldToScreen(
-                new Vector3(actor.Position.X, actor.Position.Y, actor.Position.Z),
-                out var pos);
-            
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
             ImGuiHelpers.ForceNextWindowMainViewport();
             ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
@@ -37,8 +33,8 @@ namespace PixelPerfect
             foreach (var doodle in doodleBag)
             {
                 if (!doodle.Enabled) continue;
-                
-                if (doodle.Job != 0 && doodleJobsUint[doodle.Job] != _cs.LocalPlayer.ClassJob.Id) continue;
+
+                if (!CheckJob(_cs.LocalPlayer.ClassJob.Id, doodle.JobsBool)) continue;
 
                 if (doodle.Combat && !_condition[ConditionFlag.InCombat]) continue;
 
@@ -46,7 +42,7 @@ namespace PixelPerfect
 
                 if (doodle.Type == 0)//Ring
                 {
-                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour));
+                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour),doodle.Offset,doodle.Vector);
                 }
                 if (doodle.Type == 1)//Line
                 {
@@ -100,6 +96,19 @@ namespace PixelPerfect
 
                 if (doodle.Type == 2)//Circle
                 {
+                    var xOff = 0f;
+                    var yOff = 0f;
+                    if (doodle.Offset)
+                    {
+                        xOff = doodle.Vector.X;
+                        yOff = doodle.Vector.Y;
+                    }
+
+                    _gui.WorldToScreen(
+                         new Vector3(actor.Position.X+xOff, actor.Position.Y, actor.Position.Z+yOff),
+                        out var pos);
+
+
                     if (doodle.Filled)
                     {
                         ImGui.GetWindowDrawList().AddCircleFilled(new Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments);

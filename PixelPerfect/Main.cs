@@ -174,15 +174,22 @@ namespace PixelPerfect
             _pi.SavePluginConfig(_configuration);
         }
 
-        private void DrawRingWorld(Dalamud.Game.ClientState.Objects.Types.Character actor, float radius, int numSegments, float thicc, uint colour)
+        private void DrawRingWorld(Dalamud.Game.ClientState.Objects.Types.Character actor, float radius, int numSegments, float thicc, uint colour, bool offset,Vector4 off)
         {
+            var xOff = 0f;
+            var yOff = 0f;
+            if (offset)
+            {
+                xOff =off.X;
+                yOff = off.Y;
+            }
             var seg = numSegments / 2;
             for (var i = 0; i <= numSegments; i++)
             {
                 _gui.WorldToScreen(new Num.Vector3(
-                    actor.Position.X + (radius * (float)Math.Sin((Math.PI / seg) * i)),
+                    actor.Position.X + xOff + (radius * (float)Math.Sin((Math.PI / seg) * i)),
                     actor.Position.Y,
-                    actor.Position.Z + (radius * (float)Math.Cos((Math.PI / seg) * i))
+                    actor.Position.Z + yOff + (radius * (float)Math.Cos((Math.PI / seg) * i))
                     ),
                     out Num.Vector2 pos);
                 ImGui.GetWindowDrawList().PathLineTo(new Num.Vector2(pos.X, pos.Y));
@@ -222,6 +229,7 @@ namespace PixelPerfect
         public bool Filled { get; set; } =  true;
         public bool Combat { get; set; } = false;
         public bool Instance { get; set; } = false;
+        public bool Offset { get; set; } = false;
     }
 
 

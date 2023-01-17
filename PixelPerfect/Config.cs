@@ -26,14 +26,17 @@ namespace PixelPerfect
                 ImGui.TextWrapped("Due to the massive changes between this and the previous version, old configs are no longer compatible...");
                 ImGui.TextWrapped("However, I have added many long requested features and stuff!");
                 ImGui.Text("");
-                ImGui.Text("To get started, open the config with / pp, and add a 'Doodle'.");
+                ImGui.TextWrapped("To get started, open the config with / pp, and add a 'Doodle'.");
             }
 
             var deleteNum = -1;
+            var moveNum = -1;
+            var moveUp = false;
 
             if (_config)
             {
-                ImGui.SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
+                ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(600, 300));
+                ImGui.SetNextWindowSize(new Vector2(600, 300), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Config", ref _config);
                
                 ImGui.BeginTabBar("Config Tabs");
@@ -50,19 +53,41 @@ namespace PixelPerfect
 
                         var name = doodle.Name;
                         ImGui.Checkbox($"Enable ##{number2}", ref enabled);
+                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Turn the doodle on/off entirely"); }
                         ImGui.SameLine();
                         ImGui.Checkbox($"Combat ##{number2}", ref combat);
+                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when engaged in combat"); }
                         ImGui.SameLine();
                         ImGui.Checkbox($"Instance ##{number2}", ref instance);
+                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when in an instance (a dungeon/raid etc)"); }
                         ImGui.SameLine();
-                        ImGui.PushItemWidth(200);
+                        ImGui.PushItemWidth(150);
                         ImGui.InputText($"Name##{number2}", ref name, 20);
+                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Name the doodle!"); }
                         ImGui.PopItemWidth();
                         ImGui.SameLine();
+                        if (number2 > 0)
+                        {
+                            if (ImGui.Button($"↑##{number2}"))
+                            {
+                                moveNum = number2;
+                                moveUp = true;
+                            }
+                             ImGui.SameLine();
+                        }
+                        if (number2 + 1 < doodleBag.Count)
+                        {
+                            if (ImGui.Button($"↓##{number2}"))
+                            {
+                                moveNum = number2;
+                            }
+                            ImGui.SameLine();
+                        }
                         if (ImGui.Button($"Delete##{number2}"))
                         {
                             deleteNum = number2;
                         }
+                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Delete the doodle"); }
                         number2++;
                         doodle.Enabled = enabled;
                         doodle.Instance = instance;
@@ -107,6 +132,7 @@ namespace PixelPerfect
                         var radius = doodle.Radius;
                         var job = doodle.Job;
                         var jobsBool = doodle.JobsBool;
+                        var offset = doodle.Offset;
 
                         ImGui.PushItemWidth(300);
                         ImGui.Combo($"Type ##{number}",ref type, doodleOptions, doodleOptions.Length);
@@ -117,9 +143,8 @@ namespace PixelPerfect
                             ImGui.Columns(6);
                             foreach(var jobb in doodle.JobsBool)
                             {
-
                                 ImGui.Checkbox($"{doodleJobs[loop]}", ref jobsBool[loop]);
-                                // && loop==4 && loop==8 && loop==13 && loop==16 && loop==20
+
                                 if (loop ==0 | loop==4 | loop==8 | loop==13 | loop==16)
                                 {
                                     ImGui.NextColumn();
@@ -129,7 +154,6 @@ namespace PixelPerfect
                             ImGui.Columns(1);
                             ImGui.TreePop();
                         }
-                        //ImGui.Combo($"Job##{number}",ref job, doodleJobs, doodleJobs.Length);
 
                         ImGui.InputFloat($"Thickness ##{number}", ref thickness, 0.1f, 1f);
                         
@@ -137,6 +161,12 @@ namespace PixelPerfect
                         {
                             ImGui.InputFloat($"Radius##{number}", ref radius,0.1f, 1f);
                             ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
+                            ImGui.Checkbox($"Offset##{number}", ref offset);
+                            if (offset)
+                            {
+                                ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
+                                ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                            }
                         }
 
                         if (type==1) //line
@@ -158,6 +188,12 @@ namespace PixelPerfect
                             ImGui.InputFloat($"Radius##{number}", ref radius,0.1f,1f);
                             ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
                             ImGui.Checkbox($"Filled##{number}", ref filled);
+                            ImGui.Checkbox($"Offset##{number}", ref offset);
+                            if (offset)
+                            {
+                                ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
+                                ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                            }
                         }
                         ImGui.PopItemWidth();
                         doodle.Type = type;
@@ -169,8 +205,9 @@ namespace PixelPerfect
                         doodle.Filled = filled;
                         doodle.Radius = radius;
                         doodle.Vector = new Vector4(x1, z1, x2, z2);
-                        doodle.Job= job;
-                        doodle.JobsBool= jobsBool;
+                        doodle.Job = job;
+                        doodle.JobsBool = jobsBool;
+                        doodle.Offset = offset;
 
                         if (ImGui.Button($"Show Editor##{number}"))
                         {
@@ -205,6 +242,7 @@ namespace PixelPerfect
                 }
 
                 ImGui.PopStyleColor(3);
+                ImGui.PopStyleVar();
                 ImGui.End();
 
                 if (dirtyHack > 100)
@@ -218,6 +256,22 @@ namespace PixelPerfect
                 {
                     doodleBag.RemoveAt(deleteNum);
                     deleteNum = -1;
+                }
+                if(moveNum!= -1)
+                {
+                    
+                    var dood = doodleBag[moveNum];
+                    doodleBag.RemoveAt(moveNum);
+                    if (moveUp)
+                    {
+                        doodleBag.Insert(moveNum-1, dood);
+                    }
+                    else
+                    {
+                        doodleBag.Insert(moveNum+1, dood);
+                    }
+                    moveNum= -1;
+                    moveUp = false;
                 }
             }
         }
