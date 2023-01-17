@@ -20,7 +20,7 @@ namespace PixelPerfect
         {
             if (_firstTime)
             {
-                ImGui.SetNextWindowSize(new Vector2(300, 500), ImGuiCond.FirstUseEver);
+                ImGui.SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Welcome to Pixel Perfect!", ref _firstTime);
                 ImGui.TextWrapped("Heya! Thanks for either installing my plugin, or updating it to this new version.");
                 ImGui.TextWrapped("Due to the massive changes between this and the previous version, old configs are no longer compatible...");
@@ -33,7 +33,7 @@ namespace PixelPerfect
 
             if (_config)
             {
-                ImGui.SetNextWindowSize(new Vector2(300, 500), ImGuiCond.FirstUseEver);
+                ImGui.SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Config", ref _config);
                
                 ImGui.BeginTabBar("Config Tabs");
@@ -106,11 +106,30 @@ namespace PixelPerfect
                         var z2 = doodle.Vector.W;
                         var radius = doodle.Radius;
                         var job = doodle.Job;
+                        var jobsBool = doodle.JobsBool;
 
                         ImGui.PushItemWidth(300);
                         ImGui.Combo($"Type ##{number}",ref type, doodleOptions, doodleOptions.Length);
                         ImGui.ColorEdit4($"Colour ##{number}", ref colour, ImGuiColorEditFlags.NoInputs);
-                        ImGui.Combo($"Job##{number}",ref job, doodleJobs, doodleJobs.Length);
+                        if (ImGui.TreeNode($"Jobs##{number}"))
+                        {
+                            var loop = 0;
+                            ImGui.Columns(6);
+                            foreach(var jobb in doodle.JobsBool)
+                            {
+
+                                ImGui.Checkbox($"{doodleJobs[loop]}", ref jobsBool[loop]);
+                                // && loop==4 && loop==8 && loop==13 && loop==16 && loop==20
+                                if (loop ==0 | loop==4 | loop==8 | loop==13 | loop==16)
+                                {
+                                    ImGui.NextColumn();
+                                }
+                                loop++;
+                            }
+                            ImGui.Columns(1);
+                            ImGui.TreePop();
+                        }
+                        //ImGui.Combo($"Job##{number}",ref job, doodleJobs, doodleJobs.Length);
 
                         ImGui.InputFloat($"Thickness ##{number}", ref thickness, 0.1f, 1f);
                         
@@ -137,6 +156,7 @@ namespace PixelPerfect
                         if (type==2)//dot
                         {
                             ImGui.InputFloat($"Radius##{number}", ref radius,0.1f,1f);
+                            ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
                             ImGui.Checkbox($"Filled##{number}", ref filled);
                         }
                         ImGui.PopItemWidth();
@@ -150,6 +170,7 @@ namespace PixelPerfect
                         doodle.Radius = radius;
                         doodle.Vector = new Vector4(x1, z1, x2, z2);
                         doodle.Job= job;
+                        doodle.JobsBool= jobsBool;
 
                         if (ImGui.Button($"Show Editor##{number}"))
                         {

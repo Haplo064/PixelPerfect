@@ -47,6 +47,7 @@ namespace PixelPerfect
         private float editorScale;
         private int selected;
         private int grabbed = -1;
+        private bool _update = false;
 
         private string exported = "Nothing";
 
@@ -71,9 +72,24 @@ namespace PixelPerfect
             doodleBag = _configuration.DoodleBag;
             if(doodleBag.Count==0 ) { _firstTime = true; }
 
+            if (_configuration.Version < 4)
+            {
+                _update = true;
+                _configuration.Version = 4;
+                foreach(var doodle in doodleBag)
+                {
+                    if (doodle.Job > 0)
+                    {
+                        doodle.JobsBool[0] = false;
+                        doodle.JobsBool[doodle.Job] = true;
+                    }
+                }
+            }
+
             doodleOptions = new string[3]{ "Ring","Line","Dot"};
-            doodleJobs = new String[21] { "Any", "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "BRD", "MCH", "DNC", "BLM", "SMN",  "RDM","BLU" };
+            doodleJobs = new String[21] { "All", "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "BRD", "MCH", "DNC", "BLM", "SMN",  "RDM","BLU" };
             doodleJobsUint = new uint[21] { 0, 19, 21, 32, 37, 24, 28, 33, 40, 20, 22, 30, 34, 39, 23, 31, 38, 25, 27, 35, 36 };
+            
 
             editorScale = 4f;
             selected = -1;
@@ -109,6 +125,28 @@ namespace PixelPerfect
             SaveConfig();
         }
 
+        private bool CheckJob(uint jobUint, bool[] jobList)
+        {
+            var check = false;
+            if (jobList[0])
+            {
+                check = true;
+            }
+            var loop = 0;
+            foreach(var job in jobList )
+            {
+                if ( job )
+                {
+                    if (doodleJobsUint[loop] == jobUint)
+                    {
+                        check = true;
+                    }
+                }
+                loop++;
+            }
+
+            return check;
+        }
         
           public T ImportSave<T>(string base64Text)
           {
@@ -173,6 +211,7 @@ namespace PixelPerfect
         public String Name { get; set; } = "Doodle";
         public bool Enabled { get; set; } = true;
         public int Job { get; set; } = 0;
+        public bool[] JobsBool { get; set; } = new bool[21] { true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
         public int Type { get; set; } = 0;
         public Vector4 Colour { get; set; } = new Vector4(1f, 1f, 1f, 1f);
         public bool North { get; set; } = true;
@@ -188,7 +227,7 @@ namespace PixelPerfect
 
     public class Config : IPluginConfiguration
     {
-        public int Version { get; set; } = 3;
+        public int Version { get; set; } = 4;
         public List<Drawing> DoodleBag { get; set; } = new List<Drawing>();
     }
 
