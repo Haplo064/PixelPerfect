@@ -34,14 +34,15 @@ namespace PixelPerfect
                 ImGui.InputFloat("Scale", ref editorScale, 0.1f, 1f);
                 if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Each box is 1 Yalm by 1 Yalm"); }
                 ImGui.PopItemWidth();
+                if (editorScale <= 0.1f) editorScale = 0.1f;
 
                 var windowPos = ImGui.GetWindowPos();
                 var windowMax = ImGui.GetWindowContentRegionMax();
-
+                
                 var linesY = Math.Ceiling(windowMax.Y / (10 * editorScale));
                 var linesX = Math.Ceiling(windowMax.X / (10 * editorScale));
 
-                if (ImGui.Button("?"))
+                if (ImGui.Button("Help"))
                 {
                     _editorHelp = !_editorHelp;
                 }
@@ -69,7 +70,7 @@ namespace PixelPerfect
                         loop++;
                         continue;
                     }
-                    if (doodle.Job != 0 && doodleJobsUint[doodle.Job] != _cs.LocalPlayer.ClassJob.Id)
+                    if(!CheckJob(_cs.LocalPlayer.ClassJob.Id, doodle.JobsBool))
                     {
                         loop++;
                         continue;
@@ -133,6 +134,11 @@ namespace PixelPerfect
                     }
                     if (doodle.Type == 0)//Ring
                     {
+                        if (doodle.Offset)
+                        {
+                            dotPosX += (doodle.Vector.X * 10 * editorScale);
+                            dotPosY += (doodle.Vector.Y * 10 * editorScale);
+                        }
                         DrawRingEditor(dotPosX, dotPosY,
                             doodle.Radius * 10 * editorScale,
                             doodle.Segments,
@@ -172,6 +178,11 @@ namespace PixelPerfect
                     }
                     if (doodle.Type == 2)//Circle
                     {
+                        if (doodle.Offset)
+                        {
+                            dotPosX += (doodle.Vector.X * 10 * editorScale);
+                            dotPosY += (doodle.Vector.Y * 10 * editorScale);
+                        }
                         if (doodle.Filled)
                         {
                             ImGui.GetWindowDrawList().AddCircleFilled(
@@ -201,12 +212,21 @@ namespace PixelPerfect
 
             if (_editorHelp)
             {
-                ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.FirstUseEver);
+                ImGui.SetNextWindowSize(new Vector2(300, 300), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Editor Help", ref _editorHelp);
                 ImGui.TextWrapped("Here you can see and edit your overlay in real time.");
                 ImGui.TextWrapped("Select the Doodle tab in the config, and the selected doodle will highlight in the editor.");
                 ImGui.TextWrapped("If you have a `line` doodle, you can also <Left Click> the ends to move them, and <Left Click> again to place them down.");
                 ImGui.TextWrapped("The dot in the centre is your player character.");
+                ImGui.End();
+            }
+
+            if (_update)
+            {
+                ImGui.SetNextWindowSize(new Vector2(300, 300), ImGuiCond.FirstUseEver);
+                ImGui.Begin("Pixel Perfect Update", ref _update);
+                ImGui.TextWrapped("- Fixed crash of 0 scale");
+                ImGui.TextWrapped("- Added better Job selection");
                 ImGui.End();
             }
         }
