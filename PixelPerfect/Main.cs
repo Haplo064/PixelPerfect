@@ -233,6 +233,7 @@ namespace PixelPerfect
         public bool Filled { get; set; } =  true;
         public bool Combat { get; set; } = false;
         public bool Instance { get; set; } = false;
+        public bool Unsheathed { get; set; } = false;
         public bool Offset { get; set; } = false;
     }
 
