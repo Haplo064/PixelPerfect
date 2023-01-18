@@ -18,7 +18,7 @@ namespace PixelPerfect
     {
         private void DrawConfig()
         {
-            if (_firstTime)
+            if (_firstTime && !_bitch)
             {
                 ImGui.SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Welcome to Pixel Perfect!", ref _firstTime);
@@ -26,7 +26,11 @@ namespace PixelPerfect
                 ImGui.TextWrapped("Due to the massive changes between this and the previous version, old configs are no longer compatible...");
                 ImGui.TextWrapped("However, I have added many long requested features and stuff!");
                 ImGui.Text("");
-                ImGui.TextWrapped("To get started, open the config with / pp, and add a 'Doodle'.");
+                ImGui.TextWrapped("Use the config and add a doodle to get started.");
+                if (ImGui.Button("Open Config"))
+                {
+                    _config = true;
+                }
             }
 
             var deleteNum = -1;
@@ -44,7 +48,9 @@ namespace PixelPerfect
                 if(ImGui.BeginTabItem("Config##Doodles"))
                 {
                     var number2 = 0;
-
+                    ImGui.Checkbox("Hide Updates", ref _bitch);
+                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Never show any messages."); }
+                    ImGui.Separator();
                     foreach (var doodle in doodleBag)
                     {
                         var enabled = doodle.Enabled;
@@ -199,7 +205,10 @@ namespace PixelPerfect
                         doodle.Type = type;
                         doodle.Colour = colour;
                         doodle.North = north;
+                        if (thickness < 0f) { thickness = 0f; }
                         doodle.Thickness = thickness;
+                        if (segments > 1000) { segments = 1000; }
+                        if (segments < 4) { segments = 4; }
                         doodle.Segments = segments;
                         doodle.Vector = vector;
                         doodle.Filled = filled;

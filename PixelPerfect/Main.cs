@@ -48,6 +48,7 @@ namespace PixelPerfect
         private int selected;
         private int grabbed = -1;
         private bool _update = false;
+        private bool _bitch = false;
 
         private string exported = "Nothing";
 
@@ -68,13 +69,15 @@ namespace PixelPerfect
             _condition = condition;
 
             _configuration = pluginInterface.GetPluginConfig() as Config ?? new Config();
+            
+            _bitch= _configuration.Bitch;
 
             doodleBag = _configuration.DoodleBag;
             if(doodleBag.Count==0 ) { _firstTime = true; }
 
             if (_configuration.Version < 4)
             {
-                _update = true;
+                if (!_bitch) { _update = true; }
                 _configuration.Version = 4;
                 foreach(var doodle in doodleBag)
                 {
@@ -84,6 +87,7 @@ namespace PixelPerfect
                         doodle.JobsBool[doodle.Job] = true;
                     }
                 }
+                SaveConfig();
             }
 
             doodleOptions = new string[3]{ "Ring","Line","Dot"};
@@ -170,7 +174,7 @@ namespace PixelPerfect
         private void SaveConfig()
         {
             _configuration.DoodleBag = doodleBag;
-
+            _configuration.Bitch = _bitch;
             _pi.SavePluginConfig(_configuration);
         }
 
@@ -236,6 +240,7 @@ namespace PixelPerfect
     public class Config : IPluginConfiguration
     {
         public int Version { get; set; } = 4;
+        public bool Bitch { get; set; } = false;
         public List<Drawing> DoodleBag { get; set; } = new List<Drawing>();
     }
 

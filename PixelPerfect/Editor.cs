@@ -225,10 +225,11 @@ namespace PixelPerfect
             {
                 ImGui.SetNextWindowSize(new Vector2(300, 400), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Update", ref _update);
-                ImGui.TextWrapped("- Fixed crash of 0 scale");
-                ImGui.TextWrapped("- Added better Job selection");
-                ImGui.TextWrapped("- Added offset for rings/dots");
-                ImGui.TextWrapped("- Added ability to re-order doodles");
+                ImGui.TextWrapped("Added option to remove all future messages.");
+                if(ImGui.Button("Open Config"))
+                {
+                    _config = true;
+                }
                 ImGui.End();
             }
         }

@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <Authors>Haplo064</Authors>
-        <Version>3.0.1.0</Version>
+        <Version>3.0.2.0</Version>
         <Description>Perfecting Pixels</Description>
         <PackageProjectUrl>https://github.com/Haplo064/PixelPerfect</PackageProjectUrl>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>

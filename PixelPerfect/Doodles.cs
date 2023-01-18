@@ -94,7 +94,7 @@ namespace PixelPerfect
                     }
                 }
 
-                if (doodle.Type == 2)//Circle
+                if (doodle.Type == 2)//Dot
                 {
                     var xOff = 0f;
                     var yOff = 0f;
