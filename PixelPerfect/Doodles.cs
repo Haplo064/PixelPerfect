@@ -108,6 +108,14 @@ namespace PixelPerfect
                          new Vector3(actor.Position.X+xOff, actor.Position.Y, actor.Position.Z+yOff),
                         out var pos);
 
+                    if (doodle.Outline)
+                    {
+                        ImGui.GetWindowDrawList().AddCircle(
+                            new Vector2(pos.X, pos.Y),
+                            doodle.Radius + doodle.Thickness * 0.6f,
+                            ImGui.GetColorU32(doodle.OutlineColour),
+                            doodle.Segments, doodle.Thickness);
+                    }
 
                     if (doodle.Filled)
                     {

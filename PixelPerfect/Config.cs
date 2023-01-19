@@ -139,6 +139,8 @@ namespace PixelPerfect
                         var job = doodle.Job;
                         var jobsBool = doodle.JobsBool;
                         var offset = doodle.Offset;
+                        var outline = doodle.Outline;
+                        var outlineColour = doodle.OutlineColour;
 
                         ImGui.PushItemWidth(300);
                         ImGui.Combo($"Type ##{number}",ref type, doodleOptions, doodleOptions.Length);
@@ -194,7 +196,14 @@ namespace PixelPerfect
                             ImGui.InputFloat($"Radius##{number}", ref radius,0.1f,1f);
                             ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
                             ImGui.Checkbox($"Filled##{number}", ref filled);
+                            ImGui.SameLine();
                             ImGui.Checkbox($"Offset##{number}", ref offset);
+                            ImGui.SameLine();
+                            ImGui.Checkbox($"Outline##{number}", ref outline);
+                            if (outline)
+                            {
+                                ImGui.ColorEdit4($"Outline Colour ##{number}", ref outlineColour, ImGuiColorEditFlags.NoInputs);
+                            }
                             if (offset)
                             {
                                 ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
@@ -217,6 +226,8 @@ namespace PixelPerfect
                         doodle.Job = job;
                         doodle.JobsBool = jobsBool;
                         doodle.Offset = offset;
+                        doodle.Outline= outline;
+                        doodle.OutlineColour = outlineColour;
 
                         if (ImGui.Button($"Show Editor##{number}"))
                         {
