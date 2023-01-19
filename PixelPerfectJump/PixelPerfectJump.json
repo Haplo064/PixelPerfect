@@ -1,0 +1,26 @@
+{
+  "Author": "Haplo064, forked by Gedwey",
+  "Name": "Pixel Perfect Jump",
+  "InternalName": "PixelPerfectJump",
+  "AssemblyVersion": "0.0.0.1",
+  "Description": "Showing exactly where to stand since 2023 kinda.",
+  "ApplicableVersion": "any",
+  "RepoUrl": "https://github.com/gedwey/PixelPerfectJump",
+  "Tags": [
+    "Hitbox",
+    "Overlay",
+    "Indicator"
+  ],
+  "DalamudApiLevel": 8,
+  "LoadRequiredState": 0,
+  "LoadSync": false,
+  "LoadPriority": 0,
+  "ImageUrls": [
+    "https://raw.githubusercontent.com/gedwey/PixelPerfectJump/master/images/image1.png",
+    "https://raw.githubusercontent.com/gedwey/PixelPerfectJump/master/images/image2.png",
+    "https://raw.githubusercontent.com/gedwey/PixelPerfectJump/master/images/image3.png"
+  ],
+  "IconUrl": "https://raw.githubusercontent.com/gedwey/PixelPerfectJump/master/images/icon.png",
+  "Punchline": "Reveals your hitbox, with customisable features.",
+  "AcceptsFeedback": true
+}

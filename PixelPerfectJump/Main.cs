@@ -22,12 +22,14 @@ using System.Runtime.Intrinsics.X86;
 using Condition = Dalamud.Game.ClientState.Conditions.Condition;
 using Newtonsoft.Json;
 using System.Text;
+using Dalamud.Game.Gui.Toast;
+using Dalamud.IoC;
 
 namespace PixelPerfect
 {
     public partial class PixelPerfect : IDalamudPlugin
     {
-        public string Name => "Pixel Perfect";
+        public string Name => "Pixel Perfect Jump";
         private readonly DalamudPluginInterface _pi;
         private readonly CommandManager _cm;
         private readonly ClientState _cs;
@@ -50,6 +52,7 @@ namespace PixelPerfect
         private bool _update = false;
         private bool _bitch = false;
         private int _version = 4;
+        [PluginService] private static ToastGui ToastGui { get; set; } = null!;
 
         private string exported = "Nothing";
 
@@ -76,6 +79,8 @@ namespace PixelPerfect
             doodleBag = _configuration.DoodleBag;
             if(doodleBag.Count==0 ) { _firstTime = true; }
 
+            
+
             //update popup
             if(_configuration.Version < _version)
             {
@@ -98,8 +103,8 @@ namespace PixelPerfect
                 SaveConfig();
             }
 
-            doodleOptions = new string[3]{ "Ring","Line","Dot"};
-            doodleJobs = new String[21] { "All", "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "BRD", "MCH", "DNC", "BLM", "SMN",  "RDM","BLU" };
+            doodleOptions = new string[4]{ "Ring", "Line", "Dot", "Tracker"};
+            doodleJobs = new String[21] { "All", "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "BRD", "MCH", "DNC", "BLM", "SMN", "RDM", "BLU" };
             doodleJobsUint = new uint[21] { 0, 19, 21, 32, 37, 24, 28, 33, 40, 20, 22, 30, 34, 39, 23, 31, 38, 25, 27, 35, 36 };
             
 
@@ -110,9 +115,9 @@ namespace PixelPerfect
             pluginInterface.UiBuilder.Draw += DrawDoodles;
             pluginInterface.UiBuilder.Draw += DrawEditor;
             pluginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
-            commandManager.AddHandler("/pp", new CommandInfo(Command)
+            commandManager.AddHandler("/ppj", new CommandInfo(Command)
             {
-                HelpMessage = "Pixel Perfect config."
+                HelpMessage = "Pixel Perfect Jump config."
             }) ;
         }
 
@@ -244,6 +249,8 @@ namespace PixelPerfect
         public bool Offset { get; set; } = false;
         public bool Outline { get; set; } = false;
         public Vector4 OutlineColour { get; set; } = new Vector4(1f, 1f, 1f, 1f);
+        public HashSet<Vector3> TrackingDots = new HashSet<Vector3>();
+        public bool Pause { get; set; } = false;    
     }
 
 

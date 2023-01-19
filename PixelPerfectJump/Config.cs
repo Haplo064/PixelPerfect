@@ -10,7 +10,8 @@ using Dalamud.Interface;
 using Dalamud.Plugin;
 using ImGuiNET;
 using System.Numerics;
-using System.Collections.Generic; 
+using System.Collections.Generic;
+using System.Text;
 
 namespace PixelPerfect
 {
@@ -21,7 +22,7 @@ namespace PixelPerfect
             if (_firstTime && !_bitch)
             {
                 ImGui.SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
-                ImGui.Begin("Welcome to Pixel Perfect!", ref _firstTime);
+                ImGui.Begin("Welcome to Pixel Perfect Jump!", ref _firstTime);
                 ImGui.TextWrapped("Heya! Thanks for either installing my plugin, or updating it to this new version.");
                 ImGui.TextWrapped("Due to the massive changes between this and the previous version, old configs are no longer compatible...");
                 ImGui.TextWrapped("However, I have added many long requested features and stuff!");
@@ -41,7 +42,7 @@ namespace PixelPerfect
             {
                 ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(600, 300));
                 ImGui.SetNextWindowSize(new Vector2(600, 300), ImGuiCond.FirstUseEver);
-                ImGui.Begin("Pixel Perfect Config", ref _config);
+                ImGui.Begin("Pixel Perfect Jump Config", ref _config);
                
                 ImGui.BeginTabBar("Config Tabs");
 
@@ -127,6 +128,7 @@ namespace PixelPerfect
                         var type = doodle.Type;
                         var colour = doodle.Colour;
                         var north = doodle.North;
+                        var pause = doodle.Pause;       
                         var thickness = doodle.Thickness;
                         var segments = doodle.Segments;
                         var vector = doodle.Vector;
@@ -210,10 +212,30 @@ namespace PixelPerfect
                                 ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
                             }
                         }
+                        if (type == 3)//tracker
+                        {
+                            ImGui.Checkbox($"Pause tracking", ref pause);
+                            if (ImGui.Button($"Clear tracker"))
+                            {
+                                doodle.TrackingDots.Clear();
+                            }
+                            ImGui.SameLine();
+                            if (ImGui.Button($"Copy tracking CSV"))
+                            {
+                                var csv = new StringBuilder();
+                                foreach (Vector3 p in doodle.TrackingDots)
+                                {
+                                    csv.AppendLine(string.Format("{0},{1},{2}", p.X, p.X, p.Z));
+                                }
+                                ImGui.SetClipboardText(csv.ToString());
+                                ToastGui.ShowNormal("Copied!");
+                            }
+                        }
                         ImGui.PopItemWidth();
                         doodle.Type = type;
                         doodle.Colour = colour;
                         doodle.North = north;
+                        doodle.Pause = pause;
                         if (thickness < 0f) { thickness = 0f; }
                         doodle.Thickness = thickness;
                         if (segments > 1000) { segments = 1000; }

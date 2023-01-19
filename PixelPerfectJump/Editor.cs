@@ -29,7 +29,7 @@ namespace PixelPerfect
                 var mY = ImGui.GetMousePos().Y;
 
                 ImGui.SetNextWindowSize(new Vector2(500, 500), ImGuiCond.FirstUseEver);
-                ImGui.Begin("Pixel Perfect Editor", ref _editor);
+                ImGui.Begin("Pixel Perfect Jump Editor", ref _editor);
                 ImGui.PushItemWidth(100);
                 ImGui.InputFloat("Scale", ref editorScale, 0.1f, 1f);
                 if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Each box is 1 Yalm by 1 Yalm"); }
@@ -222,7 +222,7 @@ namespace PixelPerfect
             if (_editorHelp)
             {
                 ImGui.SetNextWindowSize(new Vector2(300, 300), ImGuiCond.FirstUseEver);
-                ImGui.Begin("Pixel Perfect Editor Help", ref _editorHelp);
+                ImGui.Begin("Pixel Perfect Jump Editor Help", ref _editorHelp);
                 ImGui.TextWrapped("Here you can see and edit your overlay in real time.");
                 ImGui.TextWrapped("Select the Doodle tab in the config, and the selected doodle will highlight in the editor.");
                 ImGui.TextWrapped("If you have a `line` doodle, you can also <Left Click> the ends to move them, and <Left Click> again to place them down.");
@@ -233,7 +233,7 @@ namespace PixelPerfect
             if (_update)
             {
                 ImGui.SetNextWindowSize(new Vector2(300, 400), ImGuiCond.FirstUseEver);
-                ImGui.Begin("Pixel Perfect Update", ref _update);
+                ImGui.Begin("Pixel Perfect Jump Update", ref _update);
                 ImGui.TextWrapped("Added outline option for dots.");
                 if(ImGui.Button("Open Config"))
                 {

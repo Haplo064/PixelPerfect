@@ -59,7 +59,7 @@ namespace PixelPerfect
                         _gui.WorldToScreen(new Vector3(
                             actor.Position.X + doodle.Vector.Y,//X2
                             actor.Position.Y,
-                            actor.Position.Z + doodle.Vector.Z//Y2
+                            actor.Position.Z + doodle.Vector.Z//Y2"
                             ), out Vector2 linePos2);
 
                         ImGui.GetWindowDrawList().AddLine(new Vector2(linePos1.X, linePos1.Y), new Vector2(linePos2.X, linePos2.Y),
@@ -126,7 +126,49 @@ namespace PixelPerfect
                         ImGui.GetWindowDrawList().AddCircle(new Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments, doodle.Thickness);
                     }
                 }
+
+                if (doodle.Type == 3) // Tracker
+                {
+                    var xOff = 0f;
+                    var yOff = 0f;
+
+                    if (doodle.Offset)
+                    {
+                        xOff = doodle.Vector.X;
+                        yOff = doodle.Vector.Y;
+                    }
+
+                    if (!doodle.Pause) {
+                        doodle.TrackingDots.Add(new Vector3(actor.Position.X, actor.Position.Y, actor.Position.Z));
+                    }
+                    
+                    foreach (Vector3 p in doodle.TrackingDots)
+                    {
+                        _gui.WorldToScreen(
+                            new Vector3(p.X + xOff, p.Y, p.Z + yOff),
+                            out var pos);
+
+                        if (doodle.Outline)
+                        {
+                            ImGui.GetWindowDrawList().AddCircle(
+                                new Vector2(pos.X, pos.Y),
+                                doodle.Radius + doodle.Thickness * 0.6f,
+                                ImGui.GetColorU32(doodle.OutlineColour),
+                                doodle.Segments, doodle.Thickness);
+                        }
+
+                        if (doodle.Filled)
+                        {
+                            ImGui.GetWindowDrawList().AddCircleFilled(new Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments);
+                        }
+                        else
+                        {
+                            ImGui.GetWindowDrawList().AddCircle(new Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments, doodle.Thickness);
+                        }
+                    }
+                }
             }
+
             ImGui.End();
             ImGui.PopStyleVar();
         }
