@@ -2,15 +2,23 @@
 
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
-        <Authors>Haplo064</Authors>
-        <Version>3.0.2.0</Version>
-        <Description>Perfecting Pixels</Description>
-        <PackageProjectUrl>https://github.com/Haplo064/PixelPerfect</PackageProjectUrl>
+        <Authors>Haplo064, forked by Gedwey</Authors>
+        <Version>0.0.0.1</Version>
+        <Description>Perfecting Pixels Jumpified</Description>
+        <PackageProjectUrl>https://github.com/gedwey/PixelPerfectJump</PackageProjectUrl>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     </PropertyGroup>
 
     <PropertyGroup>
         <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+        <ErrorReport>none</ErrorReport>
+        <Title>PixelPerfectJump</Title>
+        <RepositoryUrl>https://github.com/gedwey/PixelPerfectJump</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+      <Optimize>False</Optimize>
     </PropertyGroup>
 
     <ItemGroup>
@@ -38,6 +46,27 @@
 
     <ItemGroup>
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Properties\Resources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Resources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Properties\Resources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="PixelPerfectJump.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>
