@@ -225,6 +225,7 @@ namespace PixelPerfect
         public static JobIds IdToJob(uint job) => job < 19 ? JobIds.OTHER : (JobIds)job;
     }
 
+    [Serializable]
     public class Drawing
     {
         public String Name { get; set; } = "Doodle";
