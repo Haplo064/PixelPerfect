@@ -51,30 +51,6 @@ namespace PixelPerfect
 
                 if(ImGui.BeginTabItem("Config##Doodles"))
                 {
-                    if (ImGui.Button("Export")) {
-                        var json = JsonConvert.SerializeObject(this.doodleBag);
-                        var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
-                        ImGui.SetClipboardText(base64);
-                        this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
-                    }
-                    
-                    ImGui.SameLine();
-
-                    if (ImGui.Button("Import")) {
-                        try {
-                            var base64 = ImGui.GetClipboardText();
-                            var jsonBytes = Convert.FromBase64String(base64);
-                            var json = Encoding.UTF8.GetString(jsonBytes);
-                            var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
-                            this.doodleBag = bag;
-                            this.SaveConfig();
-                            this._pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
-                        } catch (Exception ex) {
-                            PluginLog.LogError(ex, "Couldn't import doodlebag");
-                            this._pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
-                        }
-                    }
-                    
                     var number2 = 0;
                     ImGui.Checkbox("Hide Updates", ref _bitch);
                     if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Never show any messages."); }
@@ -139,6 +115,29 @@ namespace PixelPerfect
                         _editor = !_editor;
                     }
 
+                    if (ImGui.Button("Export")) {
+                        var json = JsonConvert.SerializeObject(this.doodleBag);
+                        var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+                        ImGui.SetClipboardText(base64);
+                        this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
+                    }
+                    
+                    ImGui.SameLine();
+
+                    if (ImGui.Button("Import")) {
+                        try {
+                            var base64 = ImGui.GetClipboardText();
+                            var jsonBytes = Convert.FromBase64String(base64);
+                            var json = Encoding.UTF8.GetString(jsonBytes);
+                            var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
+                            this.doodleBag.AddRange(bag);
+                            this.SaveConfig();
+                            this._pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
+                        } catch (Exception ex) {
+                            PluginLog.LogError(ex, "Couldn't import doodlebag");
+                            this._pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
+                        }
+                    }
 
                     ImGui.EndTabItem();
                 }
