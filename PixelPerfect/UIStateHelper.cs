@@ -9,7 +9,7 @@ namespace PixelPerfect
   {
     public static bool IsWeaponUnsheathed()
     {
-      return Convert.ToBoolean(UIState.Instance()->WeaponState.WeaponUnsheathed);
+      return Convert.ToBoolean(UIState.Instance()->WeaponState.IsUnsheathed);
     }
   }
 }
