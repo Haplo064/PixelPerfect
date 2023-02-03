@@ -176,12 +176,20 @@ namespace PixelPerfect
                                 ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))), doodle.Thickness);
                         }
                     }
-                    if (doodle.Type == 2)//Circle
+                    if (doodle.Type == 2)//Dot
                     {
                         if (doodle.Offset)
                         {
                             dotPosX += (doodle.Vector.X * 10 * editorScale);
                             dotPosY += (doodle.Vector.Y * 10 * editorScale);
+                        }
+                        if (doodle.Outline)
+                        {
+                            ImGui.GetWindowDrawList().AddCircle(
+                                 new Vector2(dotPosX, dotPosY),
+                                doodle.Radius + doodle.Thickness * 0.6f,
+                                ImGui.GetColorU32(new Vector4(doodle.OutlineColour.X, doodle.OutlineColour.Y, doodle.OutlineColour.Z, doodle.OutlineColour.W * (0.25f * alpha))),
+                                doodle.Segments, doodle.Thickness);
                         }
                         if (doodle.Filled)
                         {
@@ -199,6 +207,7 @@ namespace PixelPerfect
                                 ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
                                 doodle.Segments, doodle.Thickness);
                         }
+
 
                     }
                     loop++;
@@ -225,7 +234,7 @@ namespace PixelPerfect
             {
                 ImGui.SetNextWindowSize(new Vector2(300, 400), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Update", ref _update);
-                ImGui.TextWrapped("Added option to remove all future messages.");
+                ImGui.TextWrapped("Added outline option for dots.");
                 if(ImGui.Button("Open Config"))
                 {
                     _config = true;

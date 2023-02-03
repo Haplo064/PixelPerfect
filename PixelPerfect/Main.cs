@@ -49,6 +49,7 @@ namespace PixelPerfect
         private int grabbed = -1;
         private bool _update = false;
         private bool _bitch = false;
+        private int _version = 4;
 
         private string exported = "Nothing";
 
@@ -75,6 +76,13 @@ namespace PixelPerfect
             doodleBag = _configuration.DoodleBag;
             if(doodleBag.Count==0 ) { _firstTime = true; }
 
+            //update popup
+            if(_configuration.Version < _version)
+            {
+                if (!_bitch) { _update = true; }
+            }
+
+            //Update adding jobs
             if (_configuration.Version < 4)
             {
                 if (!_bitch) { _update = true; }
@@ -223,7 +231,7 @@ namespace PixelPerfect
         public bool Enabled { get; set; } = true;
         public int Job { get; set; } = 0;
         public bool[] JobsBool { get; set; } = new bool[21] { true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
-        public int Type { get; set; } = 0;
+        public int Type { get; set; } = 2;
         public Vector4 Colour { get; set; } = new Vector4(1f, 1f, 1f, 1f);
         public bool North { get; set; } = true;
         public float Thickness { get; set; } = 10f;
@@ -235,6 +243,8 @@ namespace PixelPerfect
         public bool Instance { get; set; } = false;
         public bool Unsheathed { get; set; } = false;
         public bool Offset { get; set; } = false;
+        public bool Outline { get; set; } = false;
+        public Vector4 OutlineColour { get; set; } = new Vector4(1f, 1f, 1f, 1f);
     }
 
 
