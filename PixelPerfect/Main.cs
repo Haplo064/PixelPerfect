@@ -187,7 +187,7 @@ namespace PixelPerfect
             _pi.SavePluginConfig(_configuration);
         }
 
-        private void DrawRingWorld(Dalamud.Game.ClientState.Objects.Types.Character actor, float radius, int numSegments, float thicc, uint colour, bool offset,Vector4 off)
+        private void DrawRingWorld(Dalamud.Game.ClientState.Objects.Types.Character actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off)
         {
             var xOff = 0f;
             var yOff = 0f;
@@ -195,6 +195,15 @@ namespace PixelPerfect
             {
                 xOff =off.X;
                 yOff = off.Y;
+                if (rotateOffset)
+                {
+                    var angle = -actor.Rotation;
+                    var cosTheta = MathF.Cos(angle);
+                    var sinTheta = MathF.Sin(angle);
+                    xOff = cosTheta * off.X - sinTheta * off.Y;
+                    yOff = sinTheta * off.X + cosTheta * off.Y;
+                }
+                
             }
             var seg = numSegments / 2;
             for (var i = 0; i <= numSegments; i++)
@@ -245,6 +254,7 @@ namespace PixelPerfect
         public bool Instance { get; set; } = false;
         public bool Unsheathed { get; set; } = false;
         public bool Offset { get; set; } = false;
+        public bool RotateOffset { get; set; } = false;
         public bool Outline { get; set; } = false;
         public Vector4 OutlineColour { get; set; } = new Vector4(1f, 1f, 1f, 1f);
     }
