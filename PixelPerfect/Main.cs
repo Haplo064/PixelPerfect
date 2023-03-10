@@ -23,6 +23,7 @@ using Condition = Dalamud.Game.ClientState.Conditions.Condition;
 using Newtonsoft.Json;
 using System.Text;
 
+
 namespace PixelPerfect
 {
     public partial class PixelPerfect : IDalamudPlugin

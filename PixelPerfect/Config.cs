@@ -10,7 +10,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin;
 using ImGuiNET;
 using System.Numerics;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace PixelPerfect
 {
