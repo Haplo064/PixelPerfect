@@ -42,7 +42,7 @@ namespace PixelPerfect
 
                 if (doodle.Type == 0)//Ring
                 {
-                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour),doodle.Offset,doodle.Vector);
+                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour),doodle.Offset, doodle.RotateOffset, doodle.Vector);
                 }
                 if (doodle.Type == 1)//Line
                 {
@@ -102,6 +102,14 @@ namespace PixelPerfect
                     {
                         xOff = doodle.Vector.X;
                         yOff = doodle.Vector.Y;
+                        if (doodle.RotateOffset)
+                        {
+                            var angle = -_cs.LocalPlayer.Rotation;
+                            var cosTheta = MathF.Cos(angle);
+                            var sinTheta = MathF.Sin(angle);
+                            xOff = cosTheta * doodle.Vector.X - sinTheta * (doodle.Vector.Y);
+                            yOff = sinTheta * doodle.Vector.X + cosTheta * doodle.Vector.Y;
+                        }
                     }
 
                     _gui.WorldToScreen(

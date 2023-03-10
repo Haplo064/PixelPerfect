@@ -139,6 +139,7 @@ namespace PixelPerfect
                         var job = doodle.Job;
                         var jobsBool = doodle.JobsBool;
                         var offset = doodle.Offset;
+                        var rotateOffset = doodle.RotateOffset;
                         var outline = doodle.Outline;
                         var outlineColour = doodle.OutlineColour;
 
@@ -172,6 +173,8 @@ namespace PixelPerfect
                             ImGui.Checkbox($"Offset##{number}", ref offset);
                             if (offset)
                             {
+                                ImGui.SameLine();
+                                ImGui.Checkbox($"Rotate##{number}", ref rotateOffset);
                                 ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
                                 ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
                             }
@@ -206,6 +209,7 @@ namespace PixelPerfect
                             }
                             if (offset)
                             {
+                                ImGui.Checkbox($"Rotate offset relative to player##{number}", ref rotateOffset);
                                 ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
                                 ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
                             }
@@ -226,6 +230,7 @@ namespace PixelPerfect
                         doodle.Job = job;
                         doodle.JobsBool = jobsBool;
                         doodle.Offset = offset;
+                        doodle.RotateOffset = rotateOffset;
                         doodle.Outline= outline;
                         doodle.OutlineColour = outlineColour;
 
