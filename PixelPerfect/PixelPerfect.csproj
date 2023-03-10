@@ -7,6 +7,7 @@
         <Description>Perfecting Pixels</Description>
         <PackageProjectUrl>https://github.com/Haplo064/PixelPerfect</PackageProjectUrl>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -33,6 +34,10 @@
       <Reference Include="Lumina">
         <Private>false</Private>
         <HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
+      </Reference>
+      <Reference Include="FFXIVClientStructs">
+        <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
+        <Private>false</Private>
       </Reference>
     </ItemGroup>
 

@@ -23,6 +23,7 @@ using Condition = Dalamud.Game.ClientState.Conditions.Condition;
 using Newtonsoft.Json;
 using System.Text;
 
+
 namespace PixelPerfect
 {
     public partial class PixelPerfect : IDalamudPlugin
@@ -241,6 +242,7 @@ namespace PixelPerfect
         public bool Filled { get; set; } =  true;
         public bool Combat { get; set; } = false;
         public bool Instance { get; set; } = false;
+        public bool Unsheathed { get; set; } = false;
         public bool Offset { get; set; } = false;
         public bool Outline { get; set; } = false;
         public Vector4 OutlineColour { get; set; } = new Vector4(1f, 1f, 1f, 1f);

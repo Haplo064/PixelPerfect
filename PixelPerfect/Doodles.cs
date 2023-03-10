@@ -40,6 +40,8 @@ namespace PixelPerfect
 
                 if (doodle.Instance && !_condition[ConditionFlag.BoundByDuty]) continue;
 
+                if (doodle.Unsheathed && !UIStateHelper.IsWeaponUnsheathed()) continue;
+
                 if (doodle.Type == 0)//Ring
                 {
                     DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour),doodle.Offset,doodle.Vector);

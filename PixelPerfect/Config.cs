@@ -10,7 +10,7 @@ using Dalamud.Interface;
 using Dalamud.Plugin;
 using ImGuiNET;
 using System.Numerics;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace PixelPerfect
 {
@@ -56,6 +56,7 @@ namespace PixelPerfect
                         var enabled = doodle.Enabled;
                         var combat = doodle.Combat;
                         var instance = doodle.Instance;
+                        var unsheathed = doodle.Unsheathed;
 
                         var name = doodle.Name;
                         ImGui.Checkbox($"Enable ##{number2}", ref enabled);
@@ -66,6 +67,9 @@ namespace PixelPerfect
                         ImGui.SameLine();
                         ImGui.Checkbox($"Instance ##{number2}", ref instance);
                         if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when in an instance (a dungeon/raid etc)"); }
+                        ImGui.SameLine();
+                        ImGui.Checkbox($"Unsheathed ##{number2}", ref unsheathed);
+                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when your weapon is unsheathed"); }
                         ImGui.SameLine();
                         ImGui.PushItemWidth(150);
                         ImGui.InputText($"Name##{number2}", ref name, 20);
@@ -96,6 +100,7 @@ namespace PixelPerfect
                         if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Delete the doodle"); }
                         number2++;
                         doodle.Enabled = enabled;
+                        doodle.Unsheathed = unsheathed;
                         doodle.Instance = instance;
                         doodle.Combat= combat;
                         doodle.Name = name;
