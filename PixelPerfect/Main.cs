@@ -39,7 +39,7 @@ namespace PixelPerfect
         private int _grabbed = -1;
         private bool _update;
         private bool _bitch;
-        private const int Version = 4;
+        private const int Version = 5;
         
         public PixelPerfect(
             DalamudPluginInterface pluginInterface,
@@ -64,12 +64,6 @@ namespace PixelPerfect
             _doodleBag = _configuration.DoodleBag;
             if(_doodleBag.Count==0 ) { _firstTime = true; }
 
-            //update popup
-            if(_configuration.Version < Version)
-            {
-                if (!_bitch) { _update = true; }
-            }
-
             //Update adding jobs
             if (_configuration.Version < 4)
             {
@@ -84,6 +78,14 @@ namespace PixelPerfect
                     }
                 }
                 SaveConfig();
+            }
+            
+            //update popup
+            if(_configuration.Version < Version)
+            {
+                _configuration.Version = Version;
+                SaveConfig();
+                if (!_bitch) { _update = true; }
             }
 
             _doodleOptions = new[]{ "Ring","Line","Dot"};
@@ -226,7 +228,7 @@ namespace PixelPerfect
 
     public class Config : IPluginConfiguration
     {
-        public int Version { get; set; } = 4;
+        public int Version { get; set; } = 5;
         public bool Bitch { get; set; }
         public List<Drawing> DoodleBag { get; set; } = new();
     }
