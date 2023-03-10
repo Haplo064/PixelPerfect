@@ -44,8 +44,8 @@ namespace PixelPerfect
 
             if (_config)
             {
-                ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(600, 300));
-                ImGui.SetNextWindowSize(new Vector2(600, 300), ImGuiCond.FirstUseEver);
+                ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(750, 650));
+                ImGui.SetNextWindowSize(new Vector2(750, 650), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Config", ref _config);
                
                 ImGui.BeginTabBar("Config Tabs");

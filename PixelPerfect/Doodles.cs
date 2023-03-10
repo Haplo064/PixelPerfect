@@ -35,7 +35,7 @@ namespace PixelPerfect
                 if (!doodle.Enabled) continue;
 
                 if (!CheckJob(_cs.LocalPlayer.ClassJob.Id, doodle.JobsBool)) continue;
-
+                
                 if (doodle.Combat && !_condition[ConditionFlag.InCombat]) continue;
 
                 if (doodle.Instance && !_condition[ConditionFlag.BoundByDuty]) continue;
