@@ -46,7 +46,7 @@ public partial class PixelPerfect
                 ImGui.Checkbox("Hide Updates", ref _bitch);
                 if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Never show any messages."); }
                 ImGui.Separator();
-                foreach (var doodle in doodleBag)
+                foreach (var doodle in _doodleBag)
                 {
                     var enabled = doodle.Enabled;
                     var combat = doodle.Combat;
@@ -80,7 +80,7 @@ public partial class PixelPerfect
                         }
                         ImGui.SameLine();
                     }
-                    if (number2 + 1 < doodleBag.Count)
+                    if (number2 + 1 < _doodleBag.Count)
                     {
                         if (ImGui.Button($"↓##{number2}"))
                         {
@@ -104,7 +104,7 @@ public partial class PixelPerfect
                 ImGui.Separator();
                 if (ImGui.Button("Add Doodle"))
                 {
-                    doodleBag.Add(new Drawing());
+                    _doodleBag.Add(new Drawing());
                 }
                 if (ImGui.Button("Show Editor"))
                 {
@@ -115,7 +115,7 @@ public partial class PixelPerfect
                 ImGui.TextWrapped("You can export and import your doodles to share, by using the buttons below.");
                 ImGui.TextWrapped("Either export your current doodles to your clipboard, and then share the string with your friends, or import a currently copied exported string into your own doodles, by using the import button!");
                 if (ImGui.Button("Export")) {
-                    var json = JsonConvert.SerializeObject(this.doodleBag);
+                    var json = JsonConvert.SerializeObject(this._doodleBag);
                     var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
                     ImGui.SetClipboardText(base64);
                     this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
@@ -130,12 +130,12 @@ public partial class PixelPerfect
                         var jsonBytes = Convert.FromBase64String(base64);
                         var json = Encoding.UTF8.GetString(jsonBytes);
                         var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
-                        this.doodleBag.AddRange(bag);
-                        this.SaveConfig();
-                        this._pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
+                        _doodleBag.AddRange(bag);
+                        SaveConfig();
+                        _pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
                     } catch (Exception ex) {
                         PluginLog.LogError(ex, "Couldn't import doodlebag");
-                        this._pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
+                        _pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
                     }
                 }
                 if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Imports your current clipboard to your Doodles!"); }
@@ -143,13 +143,13 @@ public partial class PixelPerfect
             }
 
             var number = 0;
-            selected = -1;
-            foreach (var doodle in doodleBag)
+            _selected = -1;
+            foreach (var doodle in _doodleBag)
             {
 
                 if (ImGui.BeginTabItem($"{doodle.Name}##{number}"))
                 {
-                    selected = number;
+                    _selected = number;
 
                     var type = doodle.Type;
                     var colour = doodle.Colour;
@@ -171,7 +171,7 @@ public partial class PixelPerfect
                     var outlineColour = doodle.OutlineColour;
 
                     ImGui.PushItemWidth(300);
-                    ImGui.Combo($"Type ##{number}",ref type, doodleOptions, doodleOptions.Length);
+                    ImGui.Combo($"Type ##{number}",ref type, _doodleOptions, _doodleOptions.Length);
                     ImGui.ColorEdit4($"Colour ##{number}", ref colour, ImGuiColorEditFlags.NoInputs);
                     if (ImGui.TreeNode($"Jobs##{number}"))
                     {
@@ -179,7 +179,7 @@ public partial class PixelPerfect
                         ImGui.Columns(6);
                         foreach(var jobb in doodle.JobsBool)
                         {
-                            ImGui.Checkbox($"{doodleJobs[loop]}", ref jobsBool[loop]);
+                            ImGui.Checkbox($"{_doodleJobs[loop]}", ref jobsBool[loop]);
 
                             if (loop ==0 | loop==4 | loop==8 | loop==13 | loop==16)
                             {
@@ -304,28 +304,28 @@ public partial class PixelPerfect
             ImGui.PopStyleVar();
             ImGui.End();
 
-            if (dirtyHack > 100)
+            if (_dirtyHack > 100)
             {
                 SaveConfig();
-                dirtyHack = 0;
+                _dirtyHack = 0;
             }
 
-            dirtyHack++;
+            _dirtyHack++;
             if (deleteNum != -1)
             {
-                doodleBag.RemoveAt(deleteNum);
+                _doodleBag.RemoveAt(deleteNum);
             }
 
             if (moveNum == -1) return;
-            var doodleA = doodleBag[moveNum];
-            doodleBag.RemoveAt(moveNum);
+            var doodleA = _doodleBag[moveNum];
+            _doodleBag.RemoveAt(moveNum);
             if (moveUp)
             {
-                doodleBag.Insert(moveNum-1, doodleA);
+                _doodleBag.Insert(moveNum-1, doodleA);
             }
             else
             {
-                doodleBag.Insert(moveNum+1, doodleA);
+                _doodleBag.Insert(moveNum+1, doodleA);
             }
         }
     }

@@ -22,7 +22,7 @@ namespace PixelPerfect
                 ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
             ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
 
-            foreach (var doodle in doodleBag)
+            foreach (var doodle in _doodleBag)
             {
                 if (!doodle.Enabled) continue;
 
