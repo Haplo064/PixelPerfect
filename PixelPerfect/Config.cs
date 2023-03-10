@@ -11,6 +11,11 @@ using Dalamud.Plugin;
 using ImGuiNET;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Text;
+using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Logging;
+using Newtonsoft.Json;
+
 
 namespace PixelPerfect
 {
@@ -116,7 +121,34 @@ namespace PixelPerfect
                         _editor = !_editor;
                     }
 
+                    ImGui.Separator();
+                    ImGui.TextWrapped("You can export and import your doodles to share, by using the buttons below.");
+                    ImGui.TextWrapped("Either export your current doodles to your clipboard, and then share the string with your friends, or import a currently copied exported string into your own doodles, by using the import button!");
+                    if (ImGui.Button("Export")) {
+                        var json = JsonConvert.SerializeObject(this.doodleBag);
+                        var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
+                        ImGui.SetClipboardText(base64);
+                        this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
+                    }
+                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Exports your current Doodles to your clipboard for sharing!"); }
+                    
+                    ImGui.SameLine();
 
+                    if (ImGui.Button("Import from Clipboard")) {
+                        try {
+                            var base64 = ImGui.GetClipboardText();
+                            var jsonBytes = Convert.FromBase64String(base64);
+                            var json = Encoding.UTF8.GetString(jsonBytes);
+                            var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
+                            this.doodleBag.AddRange(bag);
+                            this.SaveConfig();
+                            this._pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
+                        } catch (Exception ex) {
+                            PluginLog.LogError(ex, "Couldn't import doodlebag");
+                            this._pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
+                        }
+                    }
+                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Imports your current clipboard to your Doodles!"); }
                     ImGui.EndTabItem();
                 }
 
