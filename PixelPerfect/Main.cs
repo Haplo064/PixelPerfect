@@ -193,7 +193,7 @@ namespace PixelPerfect
             var yOff = 0f;
             if (offset)
             {
-                xOff =off.X;
+                xOff = off.X;
                 yOff = off.Y;
                 if (rotateOffset)
                 {

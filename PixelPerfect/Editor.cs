@@ -1,23 +1,10 @@
 ﻿using System;
-using System.Diagnostics;
-using Dalamud.Configuration;
-using Dalamud.Game;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.Command;
-using Dalamud.Game.Gui;
-using Dalamud.Interface;
-using Dalamud.Plugin;
 using ImGuiNET;
-using System.Collections.Generic;
-using ImPlotNET;
 using System.Numerics;
-using Dalamud.Game.ClientState.Objects.SubKinds;
-using System.Xml.Serialization;
 
 namespace PixelPerfect
 {
-    public partial class PixelPerfect : IDalamudPlugin
+    public partial class PixelPerfect
     {
         private void DrawEditor()
         {
@@ -61,7 +48,6 @@ namespace PixelPerfect
                 ImGui.GetWindowDrawList().AddCircleFilled(new Vector2(dotPosX, dotPosY), 10f, ImGui.GetColorU32(new Vector4(0.8f, 0.8f, 0.8f, 0.5f)));
 
                 var loop = 0;
-                var alpha = 1;
                 var skip = false;
                 foreach (var doodle in doodleBag)
                 {
@@ -75,6 +61,8 @@ namespace PixelPerfect
                         loop++;
                         continue;
                     }
+
+                    int alpha;
                     if (loop == selected)
                     {
                         alpha = 4;
@@ -134,10 +122,19 @@ namespace PixelPerfect
                     }
                     if (doodle.Type == 0)//Ring
                     {
-                        if (doodle.Offset)
+                        if (doodle.Offset && !doodle.RotateOffset)
                         {
                             dotPosX += (doodle.Vector.X * 10 * editorScale);
                             dotPosY += (doodle.Vector.Y * 10 * editorScale);
+                        }
+                        
+                        if (doodle.RotateOffset)
+                        {
+                            var angle = -_cs.LocalPlayer.Rotation;
+                            var cosTheta = MathF.Cos(angle);
+                            var sinTheta = MathF.Sin(angle);
+                            dotPosX += (cosTheta * (doodle.Vector.X * 10 * editorScale) - sinTheta * (doodle.Vector.Y * 10 * editorScale));
+                            dotPosY += (sinTheta * (doodle.Vector.X * 10 * editorScale) + cosTheta * (doodle.Vector.Y * 10 * editorScale));
                         }
                         DrawRingEditor(dotPosX, dotPosY,
                             doodle.Radius * 10 * editorScale,

@@ -1,20 +1,12 @@
 ﻿using System;
-using System.Diagnostics;
-using Dalamud.Configuration;
-using Dalamud.Game;
-using Dalamud.Game.ClientState;
 using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.Command;
-using Dalamud.Game.Gui;
 using Dalamud.Interface;
-using Dalamud.Plugin;
 using ImGuiNET;
 using System.Numerics;
-using System.Collections.Generic;
 
 namespace PixelPerfect
 {
-    public partial class PixelPerfect : IDalamudPlugin
+    public partial class PixelPerfect
     {
         private void DrawDoodles()
         {
