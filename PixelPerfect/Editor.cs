@@ -155,6 +155,7 @@ namespace PixelPerfect
 
                         if (doodle.North)
                         {
+
                             ImGui.GetWindowDrawList().AddLine(
                                 new Vector2(x1, y1),
                                 new Vector2(x2, y2),
@@ -183,29 +184,68 @@ namespace PixelPerfect
                             dotPosX += (doodle.Vector.X * 10 * editorScale);
                             dotPosY += (doodle.Vector.Y * 10 * editorScale);
                         }
-                        if (doodle.Outline)
+
+                        if (doodle.North)
                         {
-                            ImGui.GetWindowDrawList().AddCircle(
-                                 new Vector2(dotPosX, dotPosY),
-                                doodle.Radius + doodle.Thickness * 0.6f,
-                                ImGui.GetColorU32(new Vector4(doodle.OutlineColour.X, doodle.OutlineColour.Y, doodle.OutlineColour.Z, doodle.OutlineColour.W * (0.25f * alpha))),
-                                doodle.Segments, doodle.Thickness);
-                        }
-                        if (doodle.Filled)
-                        {
-                            ImGui.GetWindowDrawList().AddCircleFilled(
-                                new Vector2(dotPosX, dotPosY),
-                                doodle.Radius,
-                                ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
-                                doodle.Segments);
+                            if (doodle.Outline)
+                            {
+                                ImGui.GetWindowDrawList().AddCircle(
+                                     new Vector2(dotPosX, dotPosY),
+                                    doodle.Radius + doodle.Thickness * 0.6f,
+                                    ImGui.GetColorU32(new Vector4(doodle.OutlineColour.X, doodle.OutlineColour.Y, doodle.OutlineColour.Z, doodle.OutlineColour.W * (0.25f * alpha))),
+                                    doodle.Segments, doodle.Thickness);
+                            }
+                            if (doodle.Filled)
+                            {
+                                ImGui.GetWindowDrawList().AddCircleFilled(
+                                    new Vector2(dotPosX, dotPosY),
+                                    doodle.Radius,
+                                    ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
+                                    doodle.Segments);
+                            }
+                            else
+                            {
+                                ImGui.GetWindowDrawList().AddCircle(
+                                    new Vector2(dotPosX, dotPosY),
+                                    doodle.Radius,
+                                    ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
+                                    doodle.Segments, doodle.Thickness);
+                            }
                         }
                         else
                         {
-                            ImGui.GetWindowDrawList().AddCircle(
-                                new Vector2(dotPosX, dotPosY),
-                                doodle.Radius,
-                                ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
-                                doodle.Segments, doodle.Thickness);
+                            var x1 = dotPosX + (doodle.Vector.W * 10 * editorScale);
+                            var y1 = dotPosY + (doodle.Vector.X * 10 * editorScale);
+
+                            var sin = Math.Sin(-_cs.LocalPlayer.Rotation + Math.PI);
+                            var cos = Math.Cos(-_cs.LocalPlayer.Rotation + Math.PI);
+                            var xr1 = cos * (x1 - dotPosX) - sin * (y1 - dotPosY) + dotPosX;
+                            var yr1 = sin * (x1 - dotPosX) + cos * (y1 - dotPosY) + dotPosY;
+
+                            if (doodle.Outline)
+                            {
+                                ImGui.GetWindowDrawList().AddCircle(
+                                     new Vector2((float)xr1, (float)yr1),
+                                    doodle.Radius + doodle.Thickness * 0.6f,
+                                    ImGui.GetColorU32(new Vector4(doodle.OutlineColour.X, doodle.OutlineColour.Y, doodle.OutlineColour.Z, doodle.OutlineColour.W * (0.25f * alpha))),
+                                    doodle.Segments, doodle.Thickness);
+                            }
+                            if (doodle.Filled)
+                            {
+                                ImGui.GetWindowDrawList().AddCircleFilled(
+                                    new Vector2((float)xr1, (float)yr1),
+                                    doodle.Radius,
+                                    ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
+                                    doodle.Segments);
+                            }
+                            else
+                            {
+                                ImGui.GetWindowDrawList().AddCircle(
+                                    new Vector2((float)xr1, (float)yr1),
+                                    doodle.Radius,
+                                    ImGui.GetColorU32(new Vector4(doodle.Colour.X, doodle.Colour.Y, doodle.Colour.Z, doodle.Colour.W * (0.25f * alpha))),
+                                    doodle.Segments, doodle.Thickness);
+                            }
                         }
 
 

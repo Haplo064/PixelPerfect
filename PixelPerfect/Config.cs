@@ -204,10 +204,17 @@ namespace PixelPerfect
                             {
                                 ImGui.ColorEdit4($"Outline Colour ##{number}", ref outlineColour, ImGuiColorEditFlags.NoInputs);
                             }
+                            ImGui.Checkbox($"Locked North ##{number}", ref north);
+                            if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Otherwise, player relative"); }
                             if (offset)
                             {
                                 ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
                                 ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                            }
+                            if (!north)
+                            {
+                                ImGui.InputFloat($"Offset X2##{number}", ref x2, 0.1f, 1f);
+                                ImGui.InputFloat($"Offset Y2##{number}", ref z2, 0.1f, 1f);
                             }
                         }
                         ImGui.PopItemWidth();
