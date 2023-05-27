@@ -171,31 +171,31 @@ namespace PixelPerfect
                 }
                 
             }
-            var seg = numSegments / 2;
-            for (var i = 0; i <= numSegments; i++)
+            float segAng = MathF.Tau / numSegments;
+            for (var i = 0; i < numSegments; i++)
             {
                 _gui.WorldToScreen(new Vector3(
-                    actor.Position.X + xOff + (radius * (float)Math.Sin((Math.PI / seg) * i)),
+                    actor.Position.X + xOff + (radius * MathF.Sin(segAng * i)),
                     actor.Position.Y,
-                    actor.Position.Z + yOff + (radius * (float)Math.Cos((Math.PI / seg) * i))
+                    actor.Position.Z + yOff + (radius * MathF.Cos(segAng * i))
                     ),
                     out Vector2 pos);
                 ImGui.GetWindowDrawList().PathLineTo(new Vector2(pos.X, pos.Y));
             }
-            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.None, thicc);
+            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc);
         }
 
         private static void DrawRingEditor(float dX, float dY, float radius, int numSegments, float thicc, uint colour)
         {
-            var seg = numSegments / 2;
-            for (var i = 0; i <= numSegments; i++)
+            float segAng = MathF.Tau / numSegments;
+            for (var i = 0; i < numSegments; i++)
             {
-                var dX2 = dX + (radius * (float)Math.Sin((Math.PI / seg) * i));
-                var dY2 = dY + (radius * (float)Math.Cos((Math.PI / seg) * i));
+                var dX2 = dX + (radius * MathF.Sin(segAng * i));
+                var dY2 = dY + (radius * MathF.Cos(segAng * i));
 
                 ImGui.GetWindowDrawList().PathLineTo(new Vector2(dX2, dY2));
             }
-            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.None, thicc);
+            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc);
         }
 
         public static JobIds IdToJob(uint job) => job < 19 ? JobIds.OTHER : (JobIds)job;
