@@ -237,6 +237,10 @@ namespace PixelPerfect
                             }
                         }
                     }
+                    if (doodle.Type == 3)//Dashed ring
+                    {
+
+                    }
                     loop++;
 
                 }

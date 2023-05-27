@@ -8,6 +8,7 @@ namespace PixelPerfect
 {
     public partial class PixelPerfect
     {
+        const float TAU = 6.2831855f;
         private void DrawDoodles()
         {
             if (_cs.LocalPlayer == null) return;
@@ -127,6 +128,43 @@ namespace PixelPerfect
                     {
                         ImGui.GetWindowDrawList().AddCircle(new Vector2(pos.X, pos.Y), doodle.Radius, ImGui.GetColorU32(doodle.Colour), doodle.Segments, doodle.Thickness);
                     }
+                }
+
+                if (doodle.Type == 3)//Dashed Ring
+                {
+                    var xOff = 0f;
+                    var yOff = 0f;
+                    if (doodle.Offset)
+                    {
+                        xOff = doodle.Vector.X;
+                        yOff = doodle.Vector.Y;
+                        if (doodle.RotateOffset)
+                        {
+                            var angle = -actor.Rotation;
+                            var cosTheta = MathF.Cos(angle);
+                            var sinTheta = MathF.Sin(angle);
+                            xOff = cosTheta * doodle.Vector.X - sinTheta * (doodle.Vector.Y);
+                            yOff = sinTheta * doodle.Vector.X + cosTheta * doodle.Vector.Y;
+                        }
+                    }
+                    float segAng = TAU / doodle.Segments;
+                    uint col = ImGui.GetColorU32(doodle.Colour);
+                    for (int i=0; i<doodle.Segments; i++)
+                    {
+                        _gui.WorldToScreen(new Vector3(
+                            actor.Position.X + xOff + doodle.Radius * MathF.Sin(segAng * i),
+                            actor.Position.Y,
+                            actor.Position.Z + yOff + doodle.Radius * MathF.Cos(segAng * i)),
+                            out var pos1);
+                        _gui.WorldToScreen(new Vector3(
+                            actor.Position.X + xOff + doodle.Radius * MathF.Sin(segAng * (i + 0.4f)),
+                            actor.Position.Y,
+                            actor.Position.Z + yOff + doodle.Radius * MathF.Cos(segAng * (i + 0.4f))),
+                            out var pos2);
+                        ImGui.GetWindowDrawList().AddLine(pos1, pos2, col, doodle.Thickness);
+                    }
+
+
                 }
             }
             ImGui.End();

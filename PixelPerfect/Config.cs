@@ -248,6 +248,19 @@ public partial class PixelPerfect
                             ImGui.InputFloat($"Offset Y2##{number}", ref z2, 0.1f, 1f);
                         }
                     }
+                    if (type == 3)//dashed ring
+                    {
+                        ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
+                        ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
+                        ImGui.Checkbox($"Offset##{number}", ref offset);
+                        if (offset)
+                        {
+                            ImGui.SameLine();
+                            ImGui.Checkbox($"Rotate##{number}", ref rotateOffset);
+                            ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
+                            ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                        }
+                    }
                     ImGui.PopItemWidth();
                     doodle.Type = type;
                     doodle.Colour = colour;

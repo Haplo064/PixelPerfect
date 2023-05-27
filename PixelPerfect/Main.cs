@@ -88,7 +88,7 @@ namespace PixelPerfect
                 if (!_bitch) { _update = true; }
             }
 
-            _doodleOptions = new[]{ "Ring","Line","Dot"};
+            _doodleOptions = new[]{ "Ring","Line","Dot","Dashed Ring"};
             _doodleJobs = new[] { "All", "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "BRD", "MCH", "DNC", "BLM", "SMN",  "RDM","BLU" };
             _doodleJobsUint = new uint[] { 0, 19, 21, 32, 37, 24, 28, 33, 40, 20, 22, 30, 34, 39, 23, 31, 38, 25, 27, 35, 36 };
             
