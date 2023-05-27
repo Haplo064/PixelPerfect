@@ -8,7 +8,6 @@ namespace PixelPerfect
 {
     public partial class PixelPerfect
     {
-        const float TAU = 6.2831855f;
         private void DrawDoodles()
         {
             if (_cs.LocalPlayer == null) return;
@@ -147,7 +146,7 @@ namespace PixelPerfect
                             yOff = sinTheta * doodle.Vector.X + cosTheta * doodle.Vector.Y;
                         }
                     }
-                    float segAng = TAU / doodle.Segments;
+                    float segAng = MathF.Tau / doodle.Segments;
                     uint col = ImGui.GetColorU32(doodle.Colour);
                     for (int i=0; i<doodle.Segments; i++)
                     {
