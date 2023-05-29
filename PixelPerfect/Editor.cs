@@ -237,6 +237,34 @@ namespace PixelPerfect
                             }
                         }
                     }
+                    if (doodle.Type == 3)//Dashed ring
+                    {
+                        if (doodle.Offset && !doodle.RotateOffset)
+                        {
+                            dotPosX += (doodle.Vector.X * 10 * _editorScale);
+                            dotPosY += (doodle.Vector.Y * 10 * _editorScale);
+                        }
+                        if (doodle.RotateOffset)
+                        {
+                            var angle = -_cs.LocalPlayer.Rotation;
+                            var cosTheta = MathF.Cos(angle);
+                            var sinTheta = MathF.Sin(angle);
+                            dotPosX += (cosTheta * (doodle.Vector.X * 10 * _editorScale) - sinTheta * (doodle.Vector.Y * 10 * _editorScale));
+                            dotPosY += (sinTheta * (doodle.Vector.X * 10 * _editorScale) + cosTheta * (doodle.Vector.Y * 10 * _editorScale));
+                        }
+                        float segAng = MathF.Tau / doodle.Segments;
+                        uint col = ImGui.GetColorU32(doodle.Colour with { W = doodle.Colour.W * (0.25f * alpha) });
+                        for (int i = 0; i < doodle.Segments; i++)
+                        {
+                            Vector2 pos1 = new Vector2(
+                                dotPosX + doodle.Radius * 10 * _editorScale * MathF.Sin(segAng * i),
+                                dotPosY + doodle.Radius * 10 * _editorScale * MathF.Cos(segAng * i));
+                            Vector2 pos2 = new Vector2(
+                                dotPosX + doodle.Radius * 10 * _editorScale * MathF.Sin(segAng * (i + 0.4f)),
+                                dotPosY + doodle.Radius * 10 * _editorScale * MathF.Cos(segAng * (i + 0.4f)));
+                            ImGui.GetWindowDrawList().AddLine(pos1, pos2, col, doodle.Thickness);
+                        }
+                    }
                     loop++;
 
                 }
