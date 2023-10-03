@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <Authors>Haplo064</Authors>
-        <Version>3.0.3.0</Version>
+        <Version>3.0.4.0</Version>
         <Description>Perfecting Pixels</Description>
         <PackageProjectUrl>https://github.com/Haplo064/PixelPerfect</PackageProjectUrl>
         <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
@@ -42,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="DalamudPackager" Version="2.1.10" />
+      <PackageReference Include="DalamudPackager" Version="2.1.12" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     </ItemGroup>
 
