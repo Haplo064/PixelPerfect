@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Logging;
+using Dalamud.Plugin.Services;
 using Newtonsoft.Json;
 
 
@@ -37,14 +38,18 @@ public partial class PixelPerfect
             ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(750, 650));
             ImGui.SetNextWindowSize(new Vector2(750, 650), ImGuiCond.FirstUseEver);
             ImGui.Begin("Pixel Perfect Config", ref _config);
-               
+
             ImGui.BeginTabBar("Config Tabs");
 
-            if(ImGui.BeginTabItem("Config##Doodles"))
+            if (ImGui.BeginTabItem("Config##Doodles"))
             {
                 var number2 = 0;
                 ImGui.Checkbox("Hide Updates", ref _bitch);
-                if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Never show any messages."); }
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Never show any messages.");
+                }
+
                 ImGui.Separator();
                 foreach (var doodle in _doodleBag)
                 {
@@ -55,20 +60,40 @@ public partial class PixelPerfect
 
                     var name = doodle.Name;
                     ImGui.Checkbox($"Enable ##{number2}", ref enabled);
-                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Turn the doodle on/off entirely"); }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Turn the doodle on/off entirely");
+                    }
+
                     ImGui.SameLine();
                     ImGui.Checkbox($"Combat ##{number2}", ref combat);
-                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when engaged in combat"); }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Only show when engaged in combat");
+                    }
+
                     ImGui.SameLine();
                     ImGui.Checkbox($"Instance ##{number2}", ref instance);
-                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when in an instance (a dungeon/raid etc)"); }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Only show when in an instance (a dungeon/raid etc)");
+                    }
+
                     ImGui.SameLine();
                     ImGui.Checkbox($"Unsheathed ##{number2}", ref unsheathed);
-                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Only show when your weapon is unsheathed"); }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Only show when your weapon is unsheathed");
+                    }
+
                     ImGui.SameLine();
                     ImGui.PushItemWidth(150);
                     ImGui.InputText($"Name##{number2}", ref name, 20);
-                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Name the doodle!"); }
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Name the doodle!");
+                    }
+
                     ImGui.PopItemWidth();
                     ImGui.SameLine();
                     if (number2 > 0)
@@ -78,26 +103,35 @@ public partial class PixelPerfect
                             moveNum = number2;
                             moveUp = true;
                         }
+
                         ImGui.SameLine();
                     }
+
                     if (number2 + 1 < _doodleBag.Count)
                     {
                         if (ImGui.Button($"↓##{number2}"))
                         {
                             moveNum = number2;
                         }
+
                         ImGui.SameLine();
                     }
+
                     if (ImGui.Button($"Delete##{number2}"))
                     {
                         deleteNum = number2;
                     }
-                    if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Delete the doodle"); }
+
+                    if (ImGui.IsItemHovered())
+                    {
+                        ImGui.SetTooltip("Delete the doodle");
+                    }
+
                     number2++;
                     doodle.Enabled = enabled;
                     doodle.Unsheathed = unsheathed;
                     doodle.Instance = instance;
-                    doodle.Combat= combat;
+                    doodle.Combat = combat;
                     doodle.Name = name;
                 }
 
@@ -106,6 +140,7 @@ public partial class PixelPerfect
                 {
                     _doodleBag.Add(new Drawing());
                 }
+
                 if (ImGui.Button("Show Editor"))
                 {
                     _editor = !_editor;
@@ -113,19 +148,27 @@ public partial class PixelPerfect
 
                 ImGui.Separator();
                 ImGui.TextWrapped("You can export and import your doodles to share, by using the buttons below.");
-                ImGui.TextWrapped("Either export your current doodles to your clipboard, and then share the string with your friends, or import a currently copied exported string into your own doodles, by using the import button!");
-                if (ImGui.Button("Export")) {
+                ImGui.TextWrapped(
+                    "Either export your current doodles to your clipboard, and then share the string with your friends, or import a currently copied exported string into your own doodles, by using the import button!");
+                if (ImGui.Button("Export"))
+                {
                     var json = JsonConvert.SerializeObject(this._doodleBag);
                     var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
                     ImGui.SetClipboardText(base64);
                     this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
                 }
-                if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Exports your current Doodles to your clipboard for sharing!"); }
-                    
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Exports your current Doodles to your clipboard for sharing!");
+                }
+
                 ImGui.SameLine();
 
-                if (ImGui.Button("Import from Clipboard")) {
-                    try {
+                if (ImGui.Button("Import from Clipboard"))
+                {
+                    try
+                    {
                         var base64 = ImGui.GetClipboardText();
                         var jsonBytes = Convert.FromBase64String(base64);
                         var json = Encoding.UTF8.GetString(jsonBytes);
@@ -133,12 +176,18 @@ public partial class PixelPerfect
                         _doodleBag.AddRange(bag);
                         SaveConfig();
                         _pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
-                    } catch (Exception ex) {
-                        PluginLog.LogError(ex, "Couldn't import doodlebag");
+                    }
+                    catch (Exception ex)
+                    {
                         _pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
                     }
                 }
-                if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Imports your current clipboard to your Doodles!"); }
+
+                if (ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip("Imports your current clipboard to your Doodles!");
+                }
+
                 ImGui.EndTabItem();
             }
 
@@ -146,7 +195,6 @@ public partial class PixelPerfect
             _selected = -1;
             foreach (var doodle in _doodleBag)
             {
-
                 if (ImGui.BeginTabItem($"{doodle.Name}##{number}"))
                 {
                     _selected = number;
@@ -159,7 +207,7 @@ public partial class PixelPerfect
                     var vector = doodle.Vector;
                     var filled = doodle.Filled;
                     var x1 = doodle.Vector.X;
-                    var z1= doodle.Vector.Y;
+                    var z1 = doodle.Vector.Y;
                     var x2 = doodle.Vector.Z;
                     var z2 = doodle.Vector.W;
                     var radius = doodle.Radius;
@@ -171,84 +219,31 @@ public partial class PixelPerfect
                     var outlineColour = doodle.OutlineColour;
 
                     ImGui.PushItemWidth(300);
-                    ImGui.Combo($"Type ##{number}",ref type, _doodleOptions, _doodleOptions.Length);
+                    ImGui.Combo($"Type ##{number}", ref type, _doodleOptions, _doodleOptions.Length);
                     ImGui.ColorEdit4($"Colour ##{number}", ref colour, ImGuiColorEditFlags.NoInputs);
                     if (ImGui.TreeNode($"Jobs##{number}"))
                     {
                         var loop = 0;
                         ImGui.Columns(6);
-                        foreach(var jobb in doodle.JobsBool)
+                        foreach (var jobb in doodle.JobsBool)
                         {
                             ImGui.Checkbox($"{_doodleJobs[loop]}", ref jobsBool[loop]);
 
-                            if (loop ==0 | loop==4 | loop==8 | loop==13 | loop==16)
+                            if (loop == 0 | loop == 4 | loop == 8 | loop == 13 | loop == 16)
                             {
                                 ImGui.NextColumn();
                             }
+
                             loop++;
                         }
+
                         ImGui.Columns(1);
                         ImGui.TreePop();
                     }
 
                     ImGui.InputFloat($"Thickness ##{number}", ref thickness, 0.1f, 1f);
-                        
-                    if (type == 0)//ring
-                    {
-                        ImGui.InputFloat($"Radius##{number}", ref radius,0.1f, 1f);
-                        ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
-                        ImGui.Checkbox($"Offset##{number}", ref offset);
-                        if (offset)
-                        {
-                            ImGui.SameLine();
-                            ImGui.Checkbox($"Rotate##{number}", ref rotateOffset);
-                            ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
-                            ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
-                        }
-                    }
 
-                    if (type==1) //line
-                    {
-                        ImGui.Checkbox($"Locked North ##{number}", ref north);
-                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Otherwise, player relative"); }
-                        ImGui.PushItemWidth(100);
-                        ImGui.InputFloat($"X 1##{number}", ref x1, 0.1f, 1f);
-                        ImGui.SameLine();
-                        ImGui.InputFloat($"Y 1##{number}", ref z1, 0.1f, 1f);
-                        ImGui.InputFloat($"X 2##{number}", ref x2, 0.1f, 1f);
-                        ImGui.SameLine();
-                        ImGui.InputFloat($"Y 2##{number}", ref z2, 0.1f, 1f);
-                        ImGui.PopItemWidth();
-                    }
-
-                    if (type==2)//dot
-                    {
-                        ImGui.InputFloat($"Radius##{number}", ref radius,0.1f,1f);
-                        ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
-                        ImGui.Checkbox($"Filled##{number}", ref filled);
-                        ImGui.SameLine();
-                        ImGui.Checkbox($"Offset##{number}", ref offset);
-                        ImGui.SameLine();
-                        ImGui.Checkbox($"Outline##{number}", ref outline);
-                        if (outline)
-                        {
-                            ImGui.ColorEdit4($"Outline Colour ##{number}", ref outlineColour, ImGuiColorEditFlags.NoInputs);
-                        }
-                        ImGui.Checkbox($"Locked North ##{number}", ref north);
-                        if (ImGui.IsItemHovered()) { ImGui.SetTooltip("Otherwise, player relative"); }
-                        if (offset)
-                        {
-                            ImGui.Checkbox($"Rotate offset relative to player##{number}", ref rotateOffset);
-                            ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
-                            ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
-                        }
-                        if (!north)
-                        {
-                            ImGui.InputFloat($"Offset X2##{number}", ref x2, 0.1f, 1f);
-                            ImGui.InputFloat($"Offset Y2##{number}", ref z2, 0.1f, 1f);
-                        }
-                    }
-                    if (type == 3)//dashed ring
+                    if (type == 0) //ring
                     {
                         ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
                         ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
@@ -261,14 +256,94 @@ public partial class PixelPerfect
                             ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
                         }
                     }
+
+                    if (type == 1) //line
+                    {
+                        ImGui.Checkbox($"Locked North ##{number}", ref north);
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.SetTooltip("Otherwise, player relative");
+                        }
+
+                        ImGui.PushItemWidth(100);
+                        ImGui.InputFloat($"X 1##{number}", ref x1, 0.1f, 1f);
+                        ImGui.SameLine();
+                        ImGui.InputFloat($"Y 1##{number}", ref z1, 0.1f, 1f);
+                        ImGui.InputFloat($"X 2##{number}", ref x2, 0.1f, 1f);
+                        ImGui.SameLine();
+                        ImGui.InputFloat($"Y 2##{number}", ref z2, 0.1f, 1f);
+                        ImGui.PopItemWidth();
+                    }
+
+                    if (type == 2) //dot
+                    {
+                        ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
+                        ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
+                        ImGui.Checkbox($"Filled##{number}", ref filled);
+                        ImGui.SameLine();
+                        ImGui.Checkbox($"Offset##{number}", ref offset);
+                        ImGui.SameLine();
+                        ImGui.Checkbox($"Outline##{number}", ref outline);
+                        if (outline)
+                        {
+                            ImGui.ColorEdit4($"Outline Colour ##{number}", ref outlineColour,
+                                ImGuiColorEditFlags.NoInputs);
+                        }
+
+                        ImGui.Checkbox($"Locked North ##{number}", ref north);
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.SetTooltip("Otherwise, player relative");
+                        }
+
+                        if (offset)
+                        {
+                            ImGui.Checkbox($"Rotate offset relative to player##{number}", ref rotateOffset);
+                            ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
+                            ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                        }
+
+                        if (!north)
+                        {
+                            ImGui.InputFloat($"Offset X2##{number}", ref x2, 0.1f, 1f);
+                            ImGui.InputFloat($"Offset Y2##{number}", ref z2, 0.1f, 1f);
+                        }
+                    }
+
+                    if (type == 3) //dashed ring
+                    {
+                        ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
+                        ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
+                        ImGui.Checkbox($"Offset##{number}", ref offset);
+                        if (offset)
+                        {
+                            ImGui.SameLine();
+                            ImGui.Checkbox($"Rotate##{number}", ref rotateOffset);
+                            ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
+                            ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                        }
+                    }
+
                     ImGui.PopItemWidth();
                     doodle.Type = type;
                     doodle.Colour = colour;
                     doodle.North = north;
-                    if (thickness < 0f) { thickness = 0f; }
+                    if (thickness < 0f)
+                    {
+                        thickness = 0f;
+                    }
+
                     doodle.Thickness = thickness;
-                    if (segments > 1000) { segments = 1000; }
-                    if (segments < 4) { segments = 4; }
+                    if (segments > 1000)
+                    {
+                        segments = 1000;
+                    }
+
+                    if (segments < 4)
+                    {
+                        segments = 4;
+                    }
+
                     doodle.Segments = segments;
                     doodle.Vector = vector;
                     doodle.Filled = filled;
@@ -278,18 +353,20 @@ public partial class PixelPerfect
                     doodle.JobsBool = jobsBool;
                     doodle.Offset = offset;
                     doodle.RotateOffset = rotateOffset;
-                    doodle.Outline= outline;
+                    doodle.Outline = outline;
                     doodle.OutlineColour = outlineColour;
 
                     if (ImGui.Button($"Show Editor##{number}"))
                     {
                         _editor = !_editor;
                     }
+
                     ImGui.EndTabItem();
                 }
-                    
+
                 number++;
             }
+
             ImGui.EndTabBar();
 
             ImGui.Separator();
@@ -299,6 +376,7 @@ public partial class PixelPerfect
                 SaveConfig();
                 _config = false;
             }
+
             ImGui.SameLine();
             ImGui.PushStyleColor(ImGuiCol.Button, 0xFF000000 | 0x005E5BFF);
             ImGui.PushStyleColor(ImGuiCol.ButtonActive, 0xDD000000 | 0x005E5BFF);
@@ -334,11 +412,11 @@ public partial class PixelPerfect
             _doodleBag.RemoveAt(moveNum);
             if (moveUp)
             {
-                _doodleBag.Insert(moveNum-1, doodleA);
+                _doodleBag.Insert(moveNum - 1, doodleA);
             }
             else
             {
-                _doodleBag.Insert(moveNum+1, doodleA);
+                _doodleBag.Insert(moveNum + 1, doodleA);
             }
         }
     }
