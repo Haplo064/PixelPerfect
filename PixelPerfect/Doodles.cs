@@ -20,7 +20,7 @@ namespace PixelPerfect
             ImGuiHelpers.SetNextWindowPosRelativeMainViewport(new Vector2(0, 0));
             ImGui.Begin("Canvas",
                 ImGuiWindowFlags.NoInputs | ImGuiWindowFlags.NoNav | ImGuiWindowFlags.NoTitleBar |
-                ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
+                ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground | ImGuiWindowFlags.NoFocusOnAppearing);
             ImGui.SetWindowSize(ImGui.GetIO().DisplaySize);
 
             foreach (var doodle in _doodleBag)
