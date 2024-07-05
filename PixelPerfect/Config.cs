@@ -423,7 +423,7 @@ public partial class PixelPerfect
         string message,
         NotificationType type = NotificationType.Info,
         uint durationInMs = 3000,
-        string title = "LMeter")
+        string title = "PixelPerfect")
     {
         Notification notification = new()
         {
