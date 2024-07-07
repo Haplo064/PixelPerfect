@@ -12,6 +12,7 @@ using System.Numerics;
 using Condition = Dalamud.Game.ClientState.Conditions.ConditionFlag;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 
 
 namespace PixelPerfect
@@ -19,13 +20,14 @@ namespace PixelPerfect
     public partial class PixelPerfect : IDalamudPlugin
     {
         public string Name => "Pixel Perfect";
-        private readonly DalamudPluginInterface _pi;
+        private readonly IDalamudPluginInterface _pi;
         private readonly ICommandManager _cm;
         private readonly IClientState _cs;
         private readonly IFramework _fw;
         private readonly IGameGui _gui;
         private readonly ICondition _condition;
         private readonly Config _configuration;
+        private readonly INotificationManager _nm;
         private bool _config;
         private bool _editor;
         private bool _firstTime;
@@ -43,12 +45,13 @@ namespace PixelPerfect
         private const int Version = 5;
         
         public PixelPerfect(
-            DalamudPluginInterface pluginInterface,
+            IDalamudPluginInterface pluginInterface,
             ICommandManager commandManager,
             IClientState clientState,
             IFramework framework,
             IGameGui gameGui,
-            ICondition condition
+            ICondition condition,
+            INotificationManager notifManager
         )
         {
             _pi = pluginInterface;
@@ -56,6 +59,7 @@ namespace PixelPerfect
             _cs = clientState;
             _fw = framework;
             _gui = gameGui;
+            _nm = notifManager;
             _condition = condition;
 
             _configuration = pluginInterface.GetPluginConfig() as Config ?? new Config();
@@ -101,6 +105,7 @@ namespace PixelPerfect
             pluginInterface.UiBuilder.Draw += DrawDoodles;
             pluginInterface.UiBuilder.Draw += DrawEditor;
             pluginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
+            pluginInterface.UiBuilder.OpenMainUi += ConfigWindow;
             commandManager.AddHandler("/pp", new CommandInfo(Command)
             {
                 HelpMessage = "Pixel Perfect config."
@@ -154,7 +159,7 @@ namespace PixelPerfect
             _pi.SavePluginConfig(_configuration);
         }
 
-        private void DrawRingWorld(GameObject actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off)
+        private void DrawRingWorld(IPlayerCharacter actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off)
         {
             var xOff = 0f;
             var yOff = 0f;

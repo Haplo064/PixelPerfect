@@ -4,7 +4,7 @@ using ImGuiNET;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Text;
-using Dalamud.Interface.Internal.Notifications;
+using Dalamud.Interface.ImGuiNotification;
 using Dalamud.Logging;
 using Dalamud.Plugin.Services;
 using Newtonsoft.Json;
@@ -14,6 +14,14 @@ namespace PixelPerfect;
 
 public partial class PixelPerfect
 {
+    private void addNotification(string content, NotificationType type)
+    {
+        Notification notif = new Notification();
+        notif.Content = content;
+        notif.Type = type;
+        _nm.AddNotification(notif);
+    }
+
     private void DrawConfig()
     {
         if (_firstTime && !_bitch)
@@ -155,7 +163,7 @@ public partial class PixelPerfect
                     var json = JsonConvert.SerializeObject(this._doodleBag);
                     var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
                     ImGui.SetClipboardText(base64);
-                    this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
+                    addNotification("Copied to clipboard", NotificationType.Info);
                 }
 
                 if (ImGui.IsItemHovered())
@@ -175,11 +183,11 @@ public partial class PixelPerfect
                         var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
                         _doodleBag.AddRange(bag);
                         SaveConfig();
-                        _pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
+                        addNotification("Imported successfully", NotificationType.Success);
                     }
                     catch (Exception ex)
                     {
-                        _pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
+                        addNotification("Could not import", NotificationType.Error);
                     }
                 }
 
