@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Authors>Haplo064</Authors>
         <Version>3.0.4.0</Version>
         <Description>Perfecting Pixels</Description>
@@ -42,7 +42,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="DalamudPackager" Version="2.1.12" />
+      <PackageReference Include="DalamudPackager" Version="2.1.13" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     </ItemGroup>
 

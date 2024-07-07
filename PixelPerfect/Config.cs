@@ -4,10 +4,8 @@ using ImGuiNET;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Text;
-using Dalamud.Interface.Internal.Notifications;
-using Dalamud.Logging;
-using Dalamud.Plugin.Services;
 using Newtonsoft.Json;
+using Dalamud.Interface.ImGuiNotification;
 
 
 namespace PixelPerfect;
@@ -155,7 +153,7 @@ public partial class PixelPerfect
                     var json = JsonConvert.SerializeObject(this._doodleBag);
                     var base64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(json));
                     ImGui.SetClipboardText(base64);
-                    this._pi.UiBuilder.AddNotification("Copied to clipboard", null, NotificationType.Info);
+                    this.AddNotification("Copied to clipboard", NotificationType.Info);
                 }
 
                 if (ImGui.IsItemHovered())
@@ -175,11 +173,11 @@ public partial class PixelPerfect
                         var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
                         _doodleBag.AddRange(bag);
                         SaveConfig();
-                        _pi.UiBuilder.AddNotification("Imported successfully", null, NotificationType.Success);
+                        this.AddNotification("Imported successfully", NotificationType.Success);
                     }
-                    catch (Exception ex)
+                    catch
                     {
-                        _pi.UiBuilder.AddNotification("Could not import", null, NotificationType.Error);
+                        this.AddNotification("Could not import", NotificationType.Error);
                     }
                 }
 
@@ -419,5 +417,22 @@ public partial class PixelPerfect
                 _doodleBag.Insert(moveNum + 1, doodleA);
             }
         }
+    }
+
+    public void AddNotification(
+        string message,
+        NotificationType type = NotificationType.Info,
+        uint durationInMs = 3000,
+        string title = "PixelPerfect")
+    {
+        Notification notification = new()
+        {
+            Title = title,
+            Content = message,
+            Type = type,
+            InitialDuration = TimeSpan.FromMilliseconds(durationInMs)
+        };
+
+        _nm.AddNotification(notification);
     }
 }
