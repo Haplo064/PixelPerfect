@@ -227,7 +227,7 @@ public partial class PixelPerfect
                         {
                             ImGui.Checkbox($"{_doodleJobs[loop]}", ref jobsBool[loop]);
 
-                            if (loop == 0 | loop == 4 | loop == 8 | loop == 13 | loop == 16)
+                            if (loop == 0 | loop == 4 | loop == 8 | loop == 14 | loop == 17)
                             {
                                 ImGui.NextColumn();
                             }

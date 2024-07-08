@@ -12,6 +12,11 @@ using System.Numerics;
 using Condition = Dalamud.Game.ClientState.Conditions.ConditionFlag;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
+using Dalamud.Interface;
+using Dalamud.Interface.Windowing;
+using Lumina.Excel.GeneratedSheets;
+using System.Linq;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace PixelPerfect
@@ -41,8 +46,8 @@ namespace PixelPerfect
         private int _grabbed = -1;
         private bool _update;
         private bool _bitch;
-        private const int Version = 5;
-        
+        private const int Version = 7;
+         
         public PixelPerfect(
             IDalamudPluginInterface pluginInterface,
             ICommandManager commandManager,
@@ -83,9 +88,32 @@ namespace PixelPerfect
                 }
                 SaveConfig();
             }
-            
+
+            //Adding two new jobs to list
+            if (_configuration.Version < 7)
+            {
+                if (!_bitch) { _update = true; }
+                _configuration.Version = 7;
+                foreach (var doodle in _doodleBag)
+                {
+                    doodle.JobsBool = AddElementToArray(doodle.JobsBool, false);
+                    doodle.JobsBool = AddElementToArray(doodle.JobsBool, false);
+                    bool[] JobTemp = doodle.JobsBool;
+                    JobTemp[22] = doodle.JobsBool[20];//Add in PCT
+                    for(int i = 14; i < 20;i++)//Add in VPR
+                    {
+                        JobTemp[i + 1] = doodle.JobsBool[i];
+                    }
+                    JobTemp[14] = false;
+                    JobTemp[21] = false;
+                    doodle.JobsBool = JobTemp;
+                }
+                     
+                    SaveConfig();
+            }
+
             //update popup
-            if(_configuration.Version < Version)
+            if (_configuration.Version < Version)
             {
                 _configuration.Version = Version;
                 SaveConfig();
@@ -93,17 +121,32 @@ namespace PixelPerfect
             }
 
             _doodleOptions = new[]{ "Ring","Line","Dot","Dashed Ring"};
-            _doodleJobs = new[] { "All", "PLD", "WAR", "DRK", "GNB", "WHM", "SCH", "AST", "SGE", "MNK", "DRG", "NIN", "SAM", "RPR", "BRD", "MCH", "DNC", "BLM", "SMN",  "RDM","BLU" };
-            _doodleJobsUint = new uint[] { 0, 19, 21, 32, 37, 24, 28, 33, 40, 20, 22, 30, 34, 39, 23, 31, 38, 25, 27, 35, 36 };
+            _doodleJobs = new[] {
+                "All",
+                "PLD", "WAR", "DRK", "GNB",
+                "WHM", "SCH", "AST", "SGE",
+                "MNK", "DRG", "NIN", "SAM", "RPR", "VPR",
+                "BRD", "MCH", "DNC",
+                "BLM", "SMN",  "RDM", "PCT",
+                "BLU" };
+            _doodleJobsUint = new uint[] {
+                0,
+                19, 21, 32, 37,
+                24, 28, 33, 40,
+                20, 22, 30, 34, 39,41,
+                23, 31, 38,
+                25, 27, 35,42,
+                36 };
             
 
             _editorScale = 4f;
             _selected = -1;
 
-            pluginInterface.UiBuilder.Draw += DrawConfig;
+            pluginInterface.UiBuilder.OpenMainUi += ConfigWindow;
             pluginInterface.UiBuilder.Draw += DrawDoodles;
             pluginInterface.UiBuilder.Draw += DrawEditor;
-            pluginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
+            pluginInterface.UiBuilder.Draw += DrawConfig;
+            //luginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
             commandManager.AddHandler("/pp", new CommandInfo(Command)
             {
                 HelpMessage = "Pixel Perfect config."
@@ -155,6 +198,20 @@ namespace PixelPerfect
             _configuration.DoodleBag = _doodleBag;
             _configuration.Bitch = _bitch;
             _pi.SavePluginConfig(_configuration);
+        }
+
+        static bool[] AddElementToArray(bool[] array, bool element)
+        {
+            // Create a new array with increased size
+            bool[] newArray = new bool[array.Length + 1];
+
+            // Copy existing elements to the new array
+            Array.Copy(array, newArray, array.Length);
+
+            // Add the new element to the end of the new array
+            newArray[newArray.Length - 1] = element;
+
+            return newArray;
         }
 
         private void DrawRingWorld(IGameObject actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off)
@@ -211,7 +268,7 @@ namespace PixelPerfect
         public string Name { get; set; } = "Doodle";
         public bool Enabled { get; set; } = true;
         public int Job { get; set; }
-        public bool[] JobsBool { get; set; } = { true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+        public bool[] JobsBool { get; set; } = { true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,false,false };
         public int Type { get; set; } = 2;
         public Vector4 Colour { get; set; } = new(1f, 1f, 1f, 1f);
         public bool North { get; set; } = true;
@@ -259,6 +316,8 @@ namespace PixelPerfect
         MNK = 20,
         BLU = 36,
         RPR = 39,
-        SGE = 40
+        SGE = 40,
+        VPR=41,
+        PCT=42
     }
 }
