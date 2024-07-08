@@ -120,7 +120,7 @@ namespace PixelPerfect
                 if (!_bitch) { _update = true; }
             }
 
-            _doodleOptions = new[]{ "Ring","Line","Dot","Dashed Ring"};
+            _doodleOptions = new[]{ "Ring","Line","Dot","Dashed Ring","Cone"};
             _doodleJobs = new[] {
                 "All",
                 "PLD", "WAR", "DRK", "GNB",
@@ -213,8 +213,57 @@ namespace PixelPerfect
 
             return newArray;
         }
+        private void DrawConeWorld(IGameObject actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off, bool north, bool fill, bool target, float zed)
+        {
+            var xOff = 0f;
+            var yOff = 0f;
+            if (offset)
+            {
+                xOff = off.X;
+                yOff = off.Y;
+                if (rotateOffset)
+                {
+                    var angle = -actor.Rotation;
+                    var cosTheta = MathF.Cos(angle);
+                    var sinTheta = MathF.Sin(angle);
+                    xOff = cosTheta * off.X - sinTheta * off.Y;
+                    yOff = sinTheta * off.X + cosTheta * off.Y;
+                }
 
-        private void DrawRingWorld(IGameObject actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off)
+            }
+            float segAng = MathF.Tau / 360;
+
+            _gui.WorldToScreen(new Vector3(
+                actor.Position.X + xOff,actor.Position.Y+zed,actor.Position.Z + yOff ), out Vector2 pos1);
+            ImGui.GetWindowDrawList().PathLineTo(new Vector2(pos1.X, pos1.Y));
+
+            int degs = 0;
+            if (!north)
+            {
+                degs = (int)(_cs.LocalPlayer.Rotation*(180/Math.PI));
+            }
+
+            if (_cs.LocalPlayer.TargetObject != null && target)
+            {
+                var atan = Math.Atan2(_cs.LocalPlayer.TargetObject.Position.X - _cs.LocalPlayer.Position.X, _cs.LocalPlayer.TargetObject.Position.Z - _cs.LocalPlayer.Position.Z);
+                var degr = atan * (180 / Math.PI);
+                degs = (int)degr;
+            }
+
+            for (var i = 0+degs-numSegments/2; i < numSegments/2 +degs; i++)
+            {
+                _gui.WorldToScreen(new Vector3(
+                    actor.Position.X + xOff + (radius * MathF.Sin(segAng * i)),
+                    actor.Position.Y+zed,
+                    actor.Position.Z + yOff + (radius * MathF.Cos(segAng * i))
+                    ),
+                    out Vector2 pos);
+                ImGui.GetWindowDrawList().PathLineTo(new Vector2(pos.X, pos.Y));
+            }
+            if (fill) { ImGui.GetWindowDrawList().PathFillConvex(colour); }
+            else { ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc); }
+        }
+        private void DrawRingWorld(IGameObject actor, float radius, int numSegments, float thicc, uint colour, bool offset, bool rotateOffset, Vector4 off, bool fill, float zed)
         {
             var xOff = 0f;
             var yOff = 0f;
@@ -237,13 +286,15 @@ namespace PixelPerfect
             {
                 _gui.WorldToScreen(new Vector3(
                     actor.Position.X + xOff + (radius * MathF.Sin(segAng * i)),
-                    actor.Position.Y,
+                    actor.Position.Y+zed,
                     actor.Position.Z + yOff + (radius * MathF.Cos(segAng * i))
                     ),
                     out Vector2 pos);
                 ImGui.GetWindowDrawList().PathLineTo(new Vector2(pos.X, pos.Y));
             }
-            ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc);
+            if (fill) { ImGui.GetWindowDrawList().PathFillConvex(colour); }
+            else { ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc); }
+           
         }
 
         private static void DrawRingEditor(float dX, float dY, float radius, int numSegments, float thicc, uint colour)
@@ -261,6 +312,8 @@ namespace PixelPerfect
 
         public static JobIds IdToJob(uint job) => job < 19 ? JobIds.OTHER : (JobIds)job;
     }
+
+
 
     [Serializable]
     public class Drawing
@@ -284,6 +337,8 @@ namespace PixelPerfect
         public bool RotateOffset { get; set; }
         public bool Outline { get; set; }
         public Vector4 OutlineColour { get; set; } = new(1f, 1f, 1f, 1f);
+        public float Zed { get; set; } = 0f;
+        public bool Zedding { get; set; } = false;
     }
 
 

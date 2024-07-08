@@ -37,23 +37,33 @@ namespace PixelPerfect
 
                 if (doodle.Type == 0)//Ring
                 {
-                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour),doodle.Offset, doodle.RotateOffset, doodle.Vector);
+                    float zed = 0f;
+                    if (doodle.Zedding)
+                    {
+                        zed = doodle.Zed;
+                    }
+                    DrawRingWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour),doodle.Offset, doodle.RotateOffset, doodle.Vector, doodle.Filled, zed);
                 }
                 if (doodle.Type == 1)//Line
                 {
+                    float zed = 0f;
+                    if (doodle.Zedding)
+                    {
+                        zed = doodle.Zed;
+                    }
                     if (doodle.North)
                     {
                         //Get LinePos1
                         _gui.WorldToScreen(new Vector3(
                             actor.Position.X + doodle.Vector.W,//X1
-                            actor.Position.Y,
+                            actor.Position.Y+zed,
                             actor.Position.Z + doodle.Vector.X//Y1
                             ), out Vector2 linePos1);
 
                         //Get LinePos2
                         _gui.WorldToScreen(new Vector3(
                             actor.Position.X + doodle.Vector.Y,//X2
-                            actor.Position.Y,
+                            actor.Position.Y+zed,
                             actor.Position.Z + doodle.Vector.Z//Y2
                             ), out Vector2 linePos2);
 
@@ -73,14 +83,14 @@ namespace PixelPerfect
                         //Get LinePos1
                         _gui.WorldToScreen(new Vector3(
                             (float)xr1,//X1
-                            actor.Position.Y,
+                            actor.Position.Y+zed,
                             (float)yr1//Y1
                             ), out Vector2 linePos1);
 
                         //Get LinePos2
                         _gui.WorldToScreen(new Vector3(
                             (float)xr2,//X2
-                            actor.Position.Y,
+                            actor.Position.Y+zed,
                             (float)yr2//Y2
                             ), out Vector2 linePos2);
 
@@ -106,9 +116,13 @@ namespace PixelPerfect
                             yOff = sinTheta * doodle.Vector.X + cosTheta * doodle.Vector.Y;
                         }
                     }
-
+                    float zed = 0f;
+                    if (doodle.Zedding)
+                    {
+                        zed = doodle.Zed;
+                    }
                     _gui.WorldToScreen(
-                         new Vector3(actor.Position.X+xOff, actor.Position.Y, actor.Position.Z+yOff),
+                         new Vector3(actor.Position.X+xOff, actor.Position.Y+zed, actor.Position.Z+yOff),
                         out var pos);
 
                     if (doodle.Outline)
@@ -132,6 +146,11 @@ namespace PixelPerfect
 
                 if (doodle.Type == 3)//Dashed Ring
                 {
+                    float zed = 0f;
+                    if (doodle.Zedding)
+                    {
+                        zed = doodle.Zed;
+                    }
                     var xOff = 0f;
                     var yOff = 0f;
                     if (doodle.Offset)
@@ -153,18 +172,27 @@ namespace PixelPerfect
                     {
                         _gui.WorldToScreen(new Vector3(
                             actor.Position.X + xOff + doodle.Radius * MathF.Sin(segAng * i),
-                            actor.Position.Y,
+                            actor.Position.Y+zed,
                             actor.Position.Z + yOff + doodle.Radius * MathF.Cos(segAng * i)),
                             out var pos1);
                         _gui.WorldToScreen(new Vector3(
                             actor.Position.X + xOff + doodle.Radius * MathF.Sin(segAng * (i + 0.4f)),
-                            actor.Position.Y,
+                            actor.Position.Y+zed,
                             actor.Position.Z + yOff + doodle.Radius * MathF.Cos(segAng * (i + 0.4f))),
                             out var pos2);
                         ImGui.GetWindowDrawList().AddLine(pos1, pos2, col, doodle.Thickness);
                     }
 
 
+                }
+                if (doodle.Type == 4)//Cone
+                {
+                    float zed = 0f;
+                    if (doodle.Zedding)
+                    {
+                        zed = doodle.Zed;
+                    }
+                    DrawConeWorld(_cs.LocalPlayer, doodle.Radius, doodle.Segments, doodle.Thickness, ImGui.GetColorU32(doodle.Colour), doodle.Offset, doodle.RotateOffset, doodle.Vector, doodle.North, doodle.Filled, doodle.Outline,zed);
                 }
             }
             ImGui.End();

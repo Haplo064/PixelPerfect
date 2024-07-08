@@ -208,6 +208,8 @@ public partial class PixelPerfect
                     var z1 = doodle.Vector.Y;
                     var x2 = doodle.Vector.Z;
                     var z2 = doodle.Vector.W;
+                    var zed = doodle.Zed;
+                    var zedding = doodle.Zedding;
                     var radius = doodle.Radius;
                     var job = doodle.Job;
                     var jobsBool = doodle.JobsBool;
@@ -246,6 +248,12 @@ public partial class PixelPerfect
                         ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
                         ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
                         ImGui.Checkbox($"Offset##{number}", ref offset);
+                        ImGui.Checkbox($"Fill##{number}", ref filled);
+                        ImGui.Checkbox($"Z##{number}", ref zedding);
+                        if (zedding)
+                        {
+                            ImGui.InputFloat($"Z-value##{number}", ref zed, 0.01f, 0.1f);
+                        }
                         if (offset)
                         {
                             ImGui.SameLine();
@@ -261,6 +269,11 @@ public partial class PixelPerfect
                         if (ImGui.IsItemHovered())
                         {
                             ImGui.SetTooltip("Otherwise, player relative");
+                        }
+                        ImGui.Checkbox($"Z##{number}", ref zedding);
+                        if (zedding)
+                        {
+                            ImGui.InputFloat($"Z-value##{number}", ref zed, 0.01f, 0.1f);
                         }
 
                         ImGui.PushItemWidth(100);
@@ -287,6 +300,11 @@ public partial class PixelPerfect
                             ImGui.ColorEdit4($"Outline Colour ##{number}", ref outlineColour,
                                 ImGuiColorEditFlags.NoInputs);
                         }
+                        ImGui.Checkbox($"Z##{number}", ref zedding);
+                        if (zedding)
+                        {
+                            ImGui.InputFloat($"Z-value##{number}", ref zed, 0.01f, 0.1f);
+                        }
 
                         ImGui.Checkbox($"Locked North ##{number}", ref north);
                         if (ImGui.IsItemHovered())
@@ -312,6 +330,11 @@ public partial class PixelPerfect
                     {
                         ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
                         ImGui.InputInt($"Segments ##{number}", ref segments, 1, 10);
+                        ImGui.Checkbox($"Z##{number}", ref zedding);
+                        if (zedding)
+                        {
+                            ImGui.InputFloat($"Z-value##{number}", ref zed, 0.01f, 0.1f);
+                        }
                         ImGui.Checkbox($"Offset##{number}", ref offset);
                         if (offset)
                         {
@@ -322,6 +345,40 @@ public partial class PixelPerfect
                         }
                     }
 
+                    if (type == 4) //Cone
+                    {
+                        if (_cs.LocalPlayer.TargetObject != null) {
+                            ImGui.Text($"{ _cs.LocalPlayer.TargetObject.Position.X}");
+                            ImGui.Text($"{_cs.LocalPlayer.TargetObject.Position.Z}");
+                            var atan = Math.Atan2(_cs.LocalPlayer.TargetObject.Position.X - _cs.LocalPlayer.Position.X, _cs.LocalPlayer.TargetObject.Position.Z - _cs.LocalPlayer.Position.Z);
+                            var degr = atan * (180 / Math.PI);
+                            ImGui.Text($"{atan}");
+                            ImGui.Text($"{degr}");
+                        }
+                        
+                        ImGui.Checkbox($"Locked North ##{number}", ref north);
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.SetTooltip("Otherwise, player relative");
+                        }
+                        ImGui.InputFloat($"Radius##{number}", ref radius, 0.1f, 1f);
+                        ImGui.InputInt($"Degrees ##{number}", ref segments, 1, 10);
+                        ImGui.Checkbox($"Offset##{number}", ref offset);
+                        ImGui.Checkbox($"Fill##{number}", ref filled);
+                        ImGui.Checkbox($"Target##{number}", ref outline);
+                        ImGui.Checkbox($"Z##{number}", ref zedding);
+                        if (zedding)
+                        {
+                            ImGui.InputFloat($"Z-value##{number}", ref zed, 0.01f, 0.1f);
+                        }
+                        if (offset)
+                        {
+                            ImGui.SameLine();
+                            ImGui.Checkbox($"Rotate##{number}", ref rotateOffset);
+                            ImGui.InputFloat($"Offset X##{number}", ref x1, 0.1f, 1f);
+                            ImGui.InputFloat($"Offset Y##{number}", ref z1, 0.1f, 1f);
+                        }
+                    }
                     ImGui.PopItemWidth();
                     doodle.Type = type;
                     doodle.Colour = colour;
@@ -346,6 +403,8 @@ public partial class PixelPerfect
                     doodle.Vector = vector;
                     doodle.Filled = filled;
                     doodle.Radius = radius;
+                    doodle.Zed = zed;
+                    doodle.Zedding = zedding;
                     doodle.Vector = new Vector4(x1, z1, x2, z2);
                     doodle.Job = job;
                     doodle.JobsBool = jobsBool;

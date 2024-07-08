@@ -265,6 +265,10 @@ namespace PixelPerfect
                             ImGui.GetWindowDrawList().AddLine(pos1, pos2, col, doodle.Thickness);
                         }
                     }
+                    if (doodle.Type == 4)//Cone
+                    {
+                    //Not used
+                    }
                     loop++;
 
                 }
@@ -286,10 +290,11 @@ namespace PixelPerfect
             {
                 ImGui.SetNextWindowSize(new Vector2(300, 400), ImGuiCond.FirstUseEver);
                 ImGui.Begin("Pixel Perfect Update", ref _update);
-                ImGui.TextWrapped("Added offset rotation for rings.");
-                ImGui.TextWrapped("Added option for sheathed.");
-                ImGui.TextWrapped("Added ability to import and export doodles, to share with friends!");
-                if(ImGui.Button("Open Config"))
+                ImGui.TextWrapped("Updated for 7.0!");
+                ImGui.TextWrapped("- Added VPR and PCT.");
+                ImGui.TextWrapped("- Added Cones for object drawing");
+                ImGui.TextWrapped("- Added Z Editing");
+                if (ImGui.Button("Open Config"))
                 {
                     _config = true;
                 }
