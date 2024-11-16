@@ -27,7 +27,7 @@ namespace PixelPerfect
             {
                 if (!doodle.Enabled) continue;
 
-                if (!CheckJob(_cs.LocalPlayer.ClassJob.Id, doodle.JobsBool)) continue;
+                if (!CheckJob(_cs.LocalPlayer.ClassJob.RowId, doodle.JobsBool)) continue;
                 
                 if (doodle.Combat && !_condition[ConditionFlag.InCombat]) continue;
 

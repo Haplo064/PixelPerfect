@@ -14,7 +14,7 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
 using Dalamud.Interface;
 using Dalamud.Interface.Windowing;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
