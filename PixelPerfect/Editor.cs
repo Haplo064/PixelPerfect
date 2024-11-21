@@ -56,7 +56,7 @@ namespace PixelPerfect
                         loop++;
                         continue;
                     }
-                    if(!CheckJob(_cs.LocalPlayer.ClassJob.Id, doodle.JobsBool))
+                    if(!CheckJob(_cs.LocalPlayer.ClassJob.RowId, doodle.JobsBool))
                     {
                         loop++;
                         continue;
