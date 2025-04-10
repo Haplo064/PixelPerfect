@@ -2,8 +2,8 @@
   "Author": "Haplo064",
   "Name": "Pixel Perfect",
   "InternalName": "PixelPerfect",
-  "AssemblyVersion": "3.2.0.0",
-  "Description": "Showing exactly where to stand since 2020.",
+  "AssemblyVersion": "3.3.1.0",
+  "Description": "Showing exactly where to stand since 2020. Endorsed by raiders!",
   "ApplicableVersion": "any",
   "RepoUrl": "https://github.com/Haplo064/PixelPerfect",
   "Tags": [
@@ -15,11 +15,11 @@
   "LoadSync": false,
   "LoadPriority": 0,
   "ImageUrls": [
-    "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/image1.png",
+    "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/image3.png",
     "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/image2.png",
-    "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/image3.png"
+    "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/image1.png"
   ],
   "IconUrl": "https://raw.githubusercontent.com/Haplo064/PixelPerfect/master/images/icon.png",
-  "Punchline": "Reveals your hitbox, with customisable features.",
+  "Punchline": "Reveals your hitbox, with customisable features. Endorsed by world first raiders!",
   "AcceptsFeedback": true
 }
