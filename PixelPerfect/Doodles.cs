@@ -26,6 +26,8 @@ namespace PixelPerfect
             foreach (var doodle in _doodleBag)
             {
                 if (!doodle.Enabled) continue;
+                
+                if (_condition[ConditionFlag.Occupied38]) continue; // is in-combat cutscene
 
                 if (!CheckJob(_cs.LocalPlayer.ClassJob.RowId, doodle.JobsBool)) continue;
                 
