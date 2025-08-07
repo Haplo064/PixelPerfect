@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using System.Numerics;
 using System.Collections.Generic;
 using System.Text;
