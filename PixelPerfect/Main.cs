@@ -5,7 +5,7 @@ using Dalamud.Game.ClientState;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
 using Dalamud.Plugin;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using Num = System.Numerics;
 using System.Collections.Generic;
 using System.Numerics;
