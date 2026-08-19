@@ -25,6 +25,7 @@ public partial class PixelPerfect
             {
                 _config = true;
             }
+            ImGui.End();
         }
 
         var deleteNum = -1;
@@ -171,9 +172,22 @@ public partial class PixelPerfect
                         var jsonBytes = Convert.FromBase64String(base64);
                         var json = Encoding.UTF8.GetString(jsonBytes);
                         var bag = JsonConvert.DeserializeObject<List<Drawing>>(json);
-                        _doodleBag.AddRange(bag);
-                        SaveConfig();
-                        this.AddNotification("Imported successfully", NotificationType.Success);
+                        if (bag == null)
+                        {
+                            this.AddNotification("Could not import", NotificationType.Error);
+                        }
+                        else
+                        {
+                            bag.RemoveAll(d => d == null);
+                            foreach (var doodle in bag)
+                            {
+                                NormalizeJobs(doodle);
+                            }
+
+                            _doodleBag.AddRange(bag);
+                            SaveConfig();
+                            this.AddNotification("Imported successfully", NotificationType.Success);
+                        }
                     }
                     catch
                     {
@@ -223,9 +237,9 @@ public partial class PixelPerfect
                     ImGui.ColorEdit4($"Colour ##{number}", ref colour, ImGuiColorEditFlags.NoInputs);
                     if (ImGui.TreeNode($"Jobs##{number}"))
                     {
-                        var loop = 0;
                         ImGui.Columns(6);
-                        foreach (var jobb in doodle.JobsBool)
+                        var count = Math.Min(jobsBool.Length, _doodleJobs.Length);
+                        for (var loop = 0; loop < count; loop++)
                         {
                             ImGui.Checkbox($"{_doodleJobs[loop]}", ref jobsBool[loop]);
 
@@ -233,8 +247,6 @@ public partial class PixelPerfect
                             {
                                 ImGui.NextColumn();
                             }
-
-                            loop++;
                         }
 
                         ImGui.Columns(1);

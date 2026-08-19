@@ -80,7 +80,7 @@ namespace PixelPerfect
                 _configuration.Version = 4;
                 foreach(var doodle in _doodleBag)
                 {
-                    if (doodle.Job > 0)
+                    if (doodle.Job > 0 && doodle.JobsBool != null && doodle.Job < doodle.JobsBool.Length)
                     {
                         doodle.JobsBool[0] = false;
                         doodle.JobsBool[doodle.Job] = true;
@@ -96,19 +96,19 @@ namespace PixelPerfect
                 _configuration.Version = 7;
                 foreach (var doodle in _doodleBag)
                 {
+                    if (doodle.JobsBool is not { Length: 21 }) continue;
+
                     doodle.JobsBool = AddElementToArray(doodle.JobsBool, false);
                     doodle.JobsBool = AddElementToArray(doodle.JobsBool, false);
-                    bool[] JobTemp = doodle.JobsBool;
-                    JobTemp[22] = doodle.JobsBool[20];//Add in PCT
-                    for(int i = 14; i < 20;i++)//Add in VPR
+                    doodle.JobsBool[22] = doodle.JobsBool[20];//Add in PCT
+                    for(int i = 19; i >= 14; i--)//Add in VPR
                     {
-                        JobTemp[i + 1] = doodle.JobsBool[i];
+                        doodle.JobsBool[i + 1] = doodle.JobsBool[i];
                     }
-                    JobTemp[14] = false;
-                    JobTemp[21] = false;
-                    doodle.JobsBool = JobTemp;
+                    doodle.JobsBool[14] = false;
+                    doodle.JobsBool[21] = false;
                 }
-                     
+
                     SaveConfig();
             }
 
@@ -137,7 +137,11 @@ namespace PixelPerfect
                 23, 31, 38,
                 25, 27, 35,42,
                 36 };
-            
+
+            foreach (var doodle in _doodleBag)
+            {
+                NormalizeJobs(doodle);
+            }
 
             _editorScale = 4f;
             _selected = -1;
@@ -146,7 +150,6 @@ namespace PixelPerfect
             pluginInterface.UiBuilder.Draw += DrawDoodles;
             pluginInterface.UiBuilder.Draw += DrawEditor;
             pluginInterface.UiBuilder.Draw += DrawConfig;
-            //luginInterface.UiBuilder.OpenConfigUi += ConfigWindow;
             commandManager.AddHandler("/pp", new CommandInfo(Command)
             {
                 HelpMessage = "Pixel Perfect config."
@@ -164,7 +167,7 @@ namespace PixelPerfect
             _pi.UiBuilder.Draw -= DrawConfig;
             _pi.UiBuilder.Draw -= DrawDoodles;
             _pi.UiBuilder.Draw -= DrawEditor;
-            _pi.UiBuilder.OpenConfigUi -= ConfigWindow;
+            _pi.UiBuilder.OpenMainUi -= ConfigWindow;
             _cm.RemoveHandler("/pp");
         }
 
@@ -176,21 +179,36 @@ namespace PixelPerfect
 
         private bool CheckJob(uint jobUint, bool[] jobList)
         {
+            var count = Math.Min(jobList.Length, _doodleJobsUint.Length);
+            if (count == 0) return false;
+
             var check = jobList[0];
-            var loop = 0;
-            foreach(var job in jobList )
+            for (var i = 0; i < count; i++)
             {
-                if ( job )
+                if (jobList[i] && _doodleJobsUint[i] == jobUint)
                 {
-                    if (_doodleJobsUint[loop] == jobUint)
-                    {
-                        check = true;
-                    }
+                    check = true;
                 }
-                loop++;
             }
 
             return check;
+        }
+
+        private void NormalizeJobs(Drawing doodle)
+        {
+            var length = _doodleJobs.Length;
+            if (doodle.JobsBool == null)
+            {
+                doodle.JobsBool = new bool[length];
+                doodle.JobsBool[0] = true;
+                return;
+            }
+
+            if (doodle.JobsBool.Length == length) return;
+
+            var resized = new bool[length];
+            Array.Copy(doodle.JobsBool, resized, Math.Min(doodle.JobsBool.Length, length));
+            doodle.JobsBool = resized;
         }
         
         private void SaveConfig()
