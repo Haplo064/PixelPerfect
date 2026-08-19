@@ -12,6 +12,8 @@ namespace PixelPerfect
         {
             if (_ot.LocalPlayer == null) return;
 
+            if (_condition[ConditionFlag.Occupied38]) return; // is in-combat cutscene
+
             var actor = _ot.LocalPlayer;
 
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0, 0));
@@ -25,8 +27,6 @@ namespace PixelPerfect
             foreach (var doodle in _doodleBag)
             {
                 if (!doodle.Enabled) continue;
-                
-                if (_condition[ConditionFlag.Occupied38]) continue; // is in-combat cutscene
 
                 if (!CheckJob(_ot.LocalPlayer.ClassJob.RowId, doodle.JobsBool)) continue;
                 

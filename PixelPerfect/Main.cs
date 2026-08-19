@@ -3,20 +3,12 @@ using Dalamud.Configuration;
 using Dalamud.Game;
 using Dalamud.Game.ClientState;
 using Dalamud.Game.Command;
-using Dalamud.Game.Gui;
 using Dalamud.Plugin;
 using Dalamud.Bindings.ImGui;
-using Num = System.Numerics;
 using System.Collections.Generic;
 using System.Numerics;
-using Condition = Dalamud.Game.ClientState.Conditions.ConditionFlag;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Plugin.Services;
-using Dalamud.Interface;
-using Dalamud.Interface.Windowing;
-using Lumina.Excel.Sheets;
-using System.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 
 namespace PixelPerfect
@@ -36,7 +28,7 @@ namespace PixelPerfect
         private bool _editor;
         private bool _firstTime;
         private bool _editorHelp;
-        private int _dirtyHack;
+        private bool _dirty;
         private readonly string[] _doodleOptions;
         private readonly string[] _doodleJobs;
         private readonly uint[] _doodleJobsUint;
@@ -329,8 +321,6 @@ namespace PixelPerfect
             }
             ImGui.GetWindowDrawList().PathStroke(colour, ImDrawFlags.Closed, thicc);
         }
-
-        public static JobIds IdToJob(uint job) => job < 19 ? JobIds.OTHER : (JobIds)job;
     }
 
 
@@ -367,32 +357,5 @@ namespace PixelPerfect
         public int Version { get; set; } = 5;
         public bool Bitch { get; set; }
         public List<Drawing> DoodleBag { get; set; } = new();
-    }
-
-    public enum JobIds : uint
-    {
-        OTHER = 0,
-        GNB = 37,
-        AST = 33,
-        PLD = 19,
-        WAR = 21,
-        DRK = 32,
-        SCH = 28,
-        WHM = 24,
-        BRD = 23,
-        DRG = 22,
-        SMN = 27,
-        SAM = 34,
-        BLM = 25,
-        RDM = 35,
-        MCH = 31,
-        DNC = 38,
-        NIN = 30,
-        MNK = 20,
-        BLU = 36,
-        RPR = 39,
-        SGE = 40,
-        VPR=41,
-        PCT=42
     }
 }

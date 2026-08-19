@@ -83,6 +83,7 @@ namespace PixelPerfect
                             {
                                 skip = true;
                                 _grabbed = -1;
+                                _dirty = true;
                             }
                         }
                         if (_grabbed == 1)
@@ -104,6 +105,7 @@ namespace PixelPerfect
                             {
                                 skip = true;
                                 _grabbed = -1;
+                                _dirty = true;
                             }
                         }
                         if (_grabbed == 2)
