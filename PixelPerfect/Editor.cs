@@ -43,9 +43,9 @@ namespace PixelPerfect
                 {
                     ImGui.GetWindowDrawList().AddLine(new Vector2(windowPos.X + (10 * i * _editorScale), windowPos.Y + 100), new Vector2(windowPos.X + (10 * i * _editorScale), windowPos.Y + windowMax.Y + 100), ImGui.GetColorU32(new Vector4(0.8f, 0.8f, 0.8f, 0.5f)));
                 }
-                var dotPosX = windowPos.X + (windowMax.X / 2);
-                var dotPosY = windowPos.Y + 50 + (windowMax.Y / 2);
-                ImGui.GetWindowDrawList().AddCircleFilled(new Vector2(dotPosX, dotPosY), 10f, ImGui.GetColorU32(new Vector4(0.8f, 0.8f, 0.8f, 0.5f)));
+                var anchorX = windowPos.X + (windowMax.X / 2);
+                var anchorY = windowPos.Y + 50 + (windowMax.Y / 2);
+                ImGui.GetWindowDrawList().AddCircleFilled(new Vector2(anchorX, anchorY), 10f, ImGui.GetColorU32(new Vector4(0.8f, 0.8f, 0.8f, 0.5f)));
 
                 var loop = 0;
                 var skip = false;
@@ -62,14 +62,17 @@ namespace PixelPerfect
                         continue;
                     }
 
+                    var drawX = anchorX;
+                    var drawY = anchorY;
+
                     int alpha;
                     if (loop == _selected)
                     {
                         alpha = 4;
-                        if (mX > dotPosX + (doodle.Vector.W * 10 * _editorScale) - 20
-                            && mX < dotPosX + (doodle.Vector.W * 10 * _editorScale) + 20
-                            && mY > dotPosY + (doodle.Vector.X * 10 * _editorScale) - 20
-                            && mY < dotPosY + (doodle.Vector.X * 10 * _editorScale) + 20)
+                        if (mX > drawX + (doodle.Vector.W * 10 * _editorScale) - 20
+                            && mX < drawX + (doodle.Vector.W * 10 * _editorScale) + 20
+                            && mY > drawY + (doodle.Vector.X * 10 * _editorScale) - 20
+                            && mY < drawY + (doodle.Vector.X * 10 * _editorScale) + 20)
                         {
                             if (_grabbed == -1 && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !skip)
                             {
@@ -80,17 +83,18 @@ namespace PixelPerfect
                             {
                                 skip = true;
                                 _grabbed = -1;
+                                _dirty = true;
                             }
                         }
                         if (_grabbed == 1)
                         {
-                            doodle.Vector = doodle.Vector with { X = (mY - dotPosY) / (10 * _editorScale), W = (mX - dotPosX) / (10 * _editorScale) };
+                            doodle.Vector = doodle.Vector with { X = (mY - drawY) / (10 * _editorScale), W = (mX - drawX) / (10 * _editorScale) };
                         }
 
-                        if (mX > dotPosX + (doodle.Vector.Y * 10 * _editorScale) - 20
-                                && mX < dotPosX + (doodle.Vector.Y * 10 * _editorScale) + 20
-                                && mY > dotPosY + (doodle.Vector.Z * 10 * _editorScale) - 20
-                                && mY < dotPosY + (doodle.Vector.Z * 10 * _editorScale) + 20)
+                        if (mX > drawX + (doodle.Vector.Y * 10 * _editorScale) - 20
+                                && mX < drawX + (doodle.Vector.Y * 10 * _editorScale) + 20
+                                && mY > drawY + (doodle.Vector.Z * 10 * _editorScale) - 20
+                                && mY < drawY + (doodle.Vector.Z * 10 * _editorScale) + 20)
                         {
                             if (_grabbed == -1 && ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !skip)
                             {
@@ -101,11 +105,12 @@ namespace PixelPerfect
                             {
                                 skip = true;
                                 _grabbed = -1;
+                                _dirty = true;
                             }
                         }
                         if (_grabbed == 2)
                         {
-                            doodle.Vector = doodle.Vector with { Y = (mX - dotPosX) / (10 * _editorScale), Z = (mY - dotPosY) / (10 * _editorScale) };
+                            doodle.Vector = doodle.Vector with { Y = (mX - drawX) / (10 * _editorScale), Z = (mY - drawY) / (10 * _editorScale) };
                         }
                     }
                     else
@@ -116,8 +121,8 @@ namespace PixelPerfect
                     {
                         if (doodle.Offset && !doodle.RotateOffset)
                         {
-                            dotPosX += (doodle.Vector.X * 10 * _editorScale);
-                            dotPosY += (doodle.Vector.Y * 10 * _editorScale);
+                            drawX += (doodle.Vector.X * 10 * _editorScale);
+                            drawY += (doodle.Vector.Y * 10 * _editorScale);
                         }
                         
                         if (doodle.RotateOffset)
@@ -125,10 +130,10 @@ namespace PixelPerfect
                             var angle = -_ot.LocalPlayer.Rotation;
                             var cosTheta = MathF.Cos(angle);
                             var sinTheta = MathF.Sin(angle);
-                            dotPosX += (cosTheta * (doodle.Vector.X * 10 * _editorScale) - sinTheta * (doodle.Vector.Y * 10 * _editorScale));
-                            dotPosY += (sinTheta * (doodle.Vector.X * 10 * _editorScale) + cosTheta * (doodle.Vector.Y * 10 * _editorScale));
+                            drawX += (cosTheta * (doodle.Vector.X * 10 * _editorScale) - sinTheta * (doodle.Vector.Y * 10 * _editorScale));
+                            drawY += (sinTheta * (doodle.Vector.X * 10 * _editorScale) + cosTheta * (doodle.Vector.Y * 10 * _editorScale));
                         }
-                        DrawRingEditor(dotPosX, dotPosY,
+                        DrawRingEditor(drawX, drawY,
                             doodle.Radius * 10 * _editorScale,
                             doodle.Segments,
                             doodle.Thickness,
@@ -136,11 +141,11 @@ namespace PixelPerfect
                     }
                     if (doodle.Type == 1)//Line
                     {
-                        var x1 = dotPosX + (doodle.Vector.W * 10 * _editorScale);
-                        var y1 = dotPosY + (doodle.Vector.X * 10 * _editorScale);
+                        var x1 = drawX + (doodle.Vector.W * 10 * _editorScale);
+                        var y1 = drawY + (doodle.Vector.X * 10 * _editorScale);
 
-                        var x2 = dotPosX + (doodle.Vector.Y * 10 * _editorScale);
-                        var y2 = dotPosY + (doodle.Vector.Z * 10 * _editorScale);
+                        var x2 = drawX + (doodle.Vector.Y * 10 * _editorScale);
+                        var y2 = drawY + (doodle.Vector.Z * 10 * _editorScale);
 
                         if (doodle.North)
                         {
@@ -154,11 +159,11 @@ namespace PixelPerfect
                         {
                             var sin = Math.Sin(-_ot.LocalPlayer.Rotation + Math.PI);
                             var cos = Math.Cos(-_ot.LocalPlayer.Rotation + Math.PI);
-                            var xr1 = cos * (x1 - dotPosX) - sin * (y1 - dotPosY) + dotPosX;
-                            var yr1 = sin * (x1 - dotPosX) + cos * (y1 - dotPosY) + dotPosY;
+                            var xr1 = cos * (x1 - drawX) - sin * (y1 - drawY) + drawX;
+                            var yr1 = sin * (x1 - drawX) + cos * (y1 - drawY) + drawY;
 
-                            var xr2 = cos * (x2 - dotPosX) - sin * (y2 - dotPosY) + dotPosX;
-                            var yr2 = sin * (x2 - dotPosX) + cos * (y2 - dotPosY) + dotPosY;
+                            var xr2 = cos * (x2 - drawX) - sin * (y2 - drawY) + drawX;
+                            var yr2 = sin * (x2 - drawX) + cos * (y2 - drawY) + drawY;
 
                             ImGui.GetWindowDrawList().AddLine(
                                 new Vector2((float)xr1, (float)yr1),
@@ -170,8 +175,8 @@ namespace PixelPerfect
                     {
                         if (doodle.Offset)
                         {
-                            dotPosX += (doodle.Vector.X * 10 * _editorScale);
-                            dotPosY += (doodle.Vector.Y * 10 * _editorScale);
+                            drawX += (doodle.Vector.X * 10 * _editorScale);
+                            drawY += (doodle.Vector.Y * 10 * _editorScale);
                         }
 
                         if (doodle.North)
@@ -179,7 +184,7 @@ namespace PixelPerfect
                             if (doodle.Outline)
                             {
                                 ImGui.GetWindowDrawList().AddCircle(
-                                     new Vector2(dotPosX, dotPosY),
+                                     new Vector2(drawX, drawY),
                                     doodle.Radius + doodle.Thickness * 0.6f,
                                     ImGui.GetColorU32(doodle.OutlineColour with { W = doodle.OutlineColour.W * (0.25f * alpha) }),
                                     doodle.Segments, doodle.Thickness);
@@ -187,7 +192,7 @@ namespace PixelPerfect
                             if (doodle.Filled)
                             {
                                 ImGui.GetWindowDrawList().AddCircleFilled(
-                                    new Vector2(dotPosX, dotPosY),
+                                    new Vector2(drawX, drawY),
                                     doodle.Radius,
                                     ImGui.GetColorU32(doodle.Colour with { W = doodle.Colour.W * (0.25f * alpha) }),
                                     doodle.Segments);
@@ -195,7 +200,7 @@ namespace PixelPerfect
                             else
                             {
                                 ImGui.GetWindowDrawList().AddCircle(
-                                    new Vector2(dotPosX, dotPosY),
+                                    new Vector2(drawX, drawY),
                                     doodle.Radius,
                                     ImGui.GetColorU32(doodle.Colour with { W = doodle.Colour.W * (0.25f * alpha) }),
                                     doodle.Segments, doodle.Thickness);
@@ -203,13 +208,13 @@ namespace PixelPerfect
                         }
                         else
                         {
-                            var x1 = dotPosX + (doodle.Vector.W * 10 * _editorScale);
-                            var y1 = dotPosY + (doodle.Vector.X * 10 * _editorScale);
+                            var x1 = drawX + (doodle.Vector.W * 10 * _editorScale);
+                            var y1 = drawY + (doodle.Vector.X * 10 * _editorScale);
 
                             var sin = Math.Sin(-_ot.LocalPlayer.Rotation + Math.PI);
                             var cos = Math.Cos(-_ot.LocalPlayer.Rotation + Math.PI);
-                            var xr1 = cos * (x1 - dotPosX) - sin * (y1 - dotPosY) + dotPosX;
-                            var yr1 = sin * (x1 - dotPosX) + cos * (y1 - dotPosY) + dotPosY;
+                            var xr1 = cos * (x1 - drawX) - sin * (y1 - drawY) + drawX;
+                            var yr1 = sin * (x1 - drawX) + cos * (y1 - drawY) + drawY;
 
                             if (doodle.Outline)
                             {
@@ -241,27 +246,27 @@ namespace PixelPerfect
                     {
                         if (doodle.Offset && !doodle.RotateOffset)
                         {
-                            dotPosX += (doodle.Vector.X * 10 * _editorScale);
-                            dotPosY += (doodle.Vector.Y * 10 * _editorScale);
+                            drawX += (doodle.Vector.X * 10 * _editorScale);
+                            drawY += (doodle.Vector.Y * 10 * _editorScale);
                         }
                         if (doodle.RotateOffset)
                         {
                             var angle = -_ot.LocalPlayer.Rotation;
                             var cosTheta = MathF.Cos(angle);
                             var sinTheta = MathF.Sin(angle);
-                            dotPosX += (cosTheta * (doodle.Vector.X * 10 * _editorScale) - sinTheta * (doodle.Vector.Y * 10 * _editorScale));
-                            dotPosY += (sinTheta * (doodle.Vector.X * 10 * _editorScale) + cosTheta * (doodle.Vector.Y * 10 * _editorScale));
+                            drawX += (cosTheta * (doodle.Vector.X * 10 * _editorScale) - sinTheta * (doodle.Vector.Y * 10 * _editorScale));
+                            drawY += (sinTheta * (doodle.Vector.X * 10 * _editorScale) + cosTheta * (doodle.Vector.Y * 10 * _editorScale));
                         }
                         float segAng = MathF.Tau / doodle.Segments;
                         uint col = ImGui.GetColorU32(doodle.Colour with { W = doodle.Colour.W * (0.25f * alpha) });
                         for (int i = 0; i < doodle.Segments; i++)
                         {
                             Vector2 pos1 = new Vector2(
-                                dotPosX + doodle.Radius * 10 * _editorScale * MathF.Sin(segAng * i),
-                                dotPosY + doodle.Radius * 10 * _editorScale * MathF.Cos(segAng * i));
+                                drawX + doodle.Radius * 10 * _editorScale * MathF.Sin(segAng * i),
+                                drawY + doodle.Radius * 10 * _editorScale * MathF.Cos(segAng * i));
                             Vector2 pos2 = new Vector2(
-                                dotPosX + doodle.Radius * 10 * _editorScale * MathF.Sin(segAng * (i + 0.4f)),
-                                dotPosY + doodle.Radius * 10 * _editorScale * MathF.Cos(segAng * (i + 0.4f)));
+                                drawX + doodle.Radius * 10 * _editorScale * MathF.Sin(segAng * (i + 0.4f)),
+                                drawY + doodle.Radius * 10 * _editorScale * MathF.Cos(segAng * (i + 0.4f)));
                             ImGui.GetWindowDrawList().AddLine(pos1, pos2, col, doodle.Thickness);
                         }
                     }
